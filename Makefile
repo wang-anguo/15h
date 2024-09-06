@@ -30,6 +30,11 @@
 ## SUCH DAMAGE.
 ##
 
+# Disable building the Ada toolchain for now, as it is to my knowledge not required on any fam15h platform and it currently fails to build on newer hosts
+# If Ada is required, this could likely be fixed, but not building it for now is the easiest solution to get this building on newer platforms.
+BUILD_LANGUAGES := c
+export BUILD_LANGUAGES
+
 ifneq ($(words $(CURDIR)),1)
     $(error Error: Path to the main directory cannot contain spaces)
 endif
