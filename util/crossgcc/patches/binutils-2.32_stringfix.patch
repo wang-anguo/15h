@@ -1,0 +1,11 @@
+diff -u binutils-2.32/gold/errors.h binutils-2.32.patched/gold/errors.h
+--- binutils-2.32/gold/errors.h
++++ binutils-2.32.patched/gold/errors.h
+@@ -24,6 +24,7 @@
+ #define GOLD_ERRORS_H
+
+ #include <cstdarg>
++#include <string>
+
+ #include "gold-threads.h"
+
