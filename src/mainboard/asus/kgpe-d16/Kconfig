@@ -30,7 +30,6 @@ config BOARD_SPECIFIC_OPTIONS
 	select MAINBOARD_HAS_LPC_TPM
 	select DRIVERS_I2C_W83795
 	select DRIVERS_ASPEED_AST2050
-	select MAINBOARD_FORCE_NATIVE_VGA_INIT
 	select POWER_STATE_DEFAULT_ON_AFTER_FAILURE
 	select IPMI_KCS
 
@@ -94,6 +93,10 @@ config ONBOARD_VGA_IS_PRIMARY
 config VGA_BIOS_ID
 	string
 	default "1a03,2000"
+
+config VGA_BIOS_FILE
+	string
+	default "3rdparty/blobs/mainboard/asus/kgpe-d16/VGABIOS.bin"
 
 config MAX_REBOOT_CNT
 	int
