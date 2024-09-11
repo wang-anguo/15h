@@ -40,10 +40,10 @@
 	url = ../ffs.git
 [submodule "3rdparty/amd_blobs"]
 	path = 3rdparty/amd_blobs
-	url = ../amd_blobs
+	url = ../amd_blobs.git
 	update = none
 	ignore = dirty
 [submodule "3rdparty/stm"]
 	path = 3rdparty/stm
-	url = ../STM
+	url = ../STM.git
 	branch = stmpe
