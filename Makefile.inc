@@ -1121,6 +1121,18 @@ ifneq ($(CONFIG_UPDATE_IMAGE),y)
 endif
 endif
 endif
+ifeq ($(CONFIG_SEABIOS_OPROM_NOEXEC),y)
+	@printf "    SeaBIOS    Do not execute PCIe Option ROMs\n"
+	$(CBFSTOOL) $@.tmp add-int -i 0 -n etc/pci-optionrom-exec
+endif
+ifeq ($(CONFIG_SEABIOS_OPROM_VGAONLY),y)
+	@printf "    SeaBIOS    Execute PCIe Option ROMs for VGA devices\n"
+	$(CBFSTOOL) $@.tmp add-int -i 1 -n etc/pci-optionrom-exec
+endif
+ifeq ($(CONFIG_SEABIOS_OPROM_ALL),y)
+	@printf "    SeaBIOS    Execute PCIe Option ROMs for all devices\n"
+	$(CBFSTOOL) $@.tmp add-int -i 2 -n etc/pci-optionrom-exec
+endif
 ifeq ($(CONFIG_SEABIOS_ADD_SERCON_PORT_FILE),y)
 	@printf "    SeaBIOS    Add sercon-port file\n"
 	$(CBFSTOOL) $@.tmp add-int -i $(CONFIG_SEABIOS_SERCON_PORT_ADDR) -n etc/sercon-port
