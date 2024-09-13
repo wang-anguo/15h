@@ -40,6 +40,11 @@ config SEABIOS_PS2_TIMEOUT
 	  after powering on. This specifies how long SeaBIOS will wait for the
 	  keyboard controller to become ready before giving up.
 
+config SEABIOS_MENU_WAIT
+	prompt "Boot menu timeout (milliseconds)"
+	default 5000
+	int
+
 config SEABIOS_THREAD_OPTIONROMS
 	prompt "Hardware init during option ROM execution"
 	default n

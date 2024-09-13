@@ -1121,6 +1121,10 @@ ifneq ($(CONFIG_UPDATE_IMAGE),y)
 endif
 endif
 endif
+ifneq ($(CONFIG_SEABIOS_MENU_WAIT),)
+	@printf "    SeaBIOS    Show the boot menu for $(CONFIG_SEABIOS_MENU_WAIT) ms\n"
+	$(CBFSTOOL) $@.tmp add-int -i $(CONFIG_SEABIOS_MENU_WAIT) -n etc/boot-menu-wait
+endif
 ifeq ($(CONFIG_SEABIOS_OPROM_NOEXEC),y)
 	@printf "    SeaBIOS    Do not execute PCIe Option ROMs\n"
 	$(CBFSTOOL) $@.tmp add-int -i 0 -n etc/pci-optionrom-exec
