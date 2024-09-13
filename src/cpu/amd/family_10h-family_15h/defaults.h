@@ -825,10 +825,10 @@ static const struct {
 					   [20:16] RttIndex = 04h */
 
 	{ 0xc4, AMD_FAM15_ALL, AMD_PTYPE_ALL, HTPHY_LINKTYPE_HT3,
-	  0x00013480, 0x0003fc80 },	/* [17:10] DCV = 0x4d,
+	  0x0000D880, 0x0003fc80 },	/* [17:10] DCV = 0x36,
 					       [7] DfeEn = 0x1 */
 
 	{ 0xd4, AMD_FAM15_ALL, AMD_PTYPE_ALL, HTPHY_LINKTYPE_HT3,
-	  0x00013480, 0x0003fc80 },     /* [17:10] DCV = 0x4d,
+	  0x0000D880, 0x0003fc80 },     /* [17:10] DCV = 0x36,
 					       [7] DfeEn = 0x1 */
 };
