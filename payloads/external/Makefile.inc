@@ -115,6 +115,23 @@ bootorder-file := $(strip $(CONFIG_SEABIOS_BOOTORDER_FILE))
 bootorder-type := raw
 endif
 
+# configure SeaBIOS OPROM Preference
+ifeq ($(CONFIG_SEABIOS_OPROM_NOEXEC),y)
+	cbfs-files-y += etc/pci-optionrom-exec
+	etc/pci-optionrom-exec-file := payloads/external/SeaBIOS/etc/int64_0
+	etc/pci-optionrom-exec-type := raw
+endif
+ifeq ($(CONFIG_SEABIOS_OPROM_VGAONLY),y)
+	cbfs-files-y += etc/pci-optionrom-exec
+	etc/pci-optionrom-exec-file := payloads/external/SeaBIOS/etc/int64_1
+	etc/pci-optionrom-exec-type := raw
+endif
+ifeq ($(CONFIG_SEABIOS_OPROM_ALL),y)
+	cbfs-files-y += etc/pci-optionrom-exec
+	etc/pci-optionrom-exec-file := payloads/external/SeaBIOS/etc/int64_2
+	etc/pci-optionrom-exec-type := raw
+endif
+
 # Depthcharge
 
 payloads/external/depthcharge/depthcharge/build/depthcharge.elf depthcharge: $(DOTCONFIG) $(CBFSTOOL)

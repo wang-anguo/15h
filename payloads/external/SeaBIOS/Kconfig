@@ -62,6 +62,23 @@ config SEABIOS_VGA_COREBOOT
 	  After initializing the GPU, the information about it can be passed to the payload.
 	  Provide an option rom that implements this legacy VGA BIOS compatibility requirement.
 
+choice
+	prompt "Execute PCIe Option ROMs"
+	default SEABIOS_OPROM_NOEXEC
+
+config SEABIOS_OPROM_NOEXEC
+	bool "None"
+config SEABIOS_OPROM_VGAONLY
+	bool "VGA Only"
+	help
+	  Only execute PCIe Option ROMs for video cards
+config SEABIOS_OPROM_ALL
+	bool "All"
+	help
+	  Execute all PCIe Option ROMs found
+
+endchoice
+
 config PAYLOAD_CONFIGFILE
 	string "SeaBIOS config file"
 	default ""
