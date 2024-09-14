@@ -237,6 +237,7 @@ void sr5650_htinit(void)
 		/* Enables transmitter de-emphasis */
 		set_nbcfg_enable_bits(sr5650_f0, 0xa4, 1 << 31, 1 << 31);
 		/* Enables transmitter de-emphasis level */
+		set_nbcfg_enable_bits(sr5650_f0, 0xa4, 0x7000000, 0x7000000); // -9.0dB
 		/* Sets training 0 time */
 		set_nbcfg_enable_bits(sr5650_f0, 0xa0, 0x3F, 0x14);
 
@@ -254,9 +255,6 @@ void sr5650_htinit(void)
 		/* Enables scrambling */
 		set_fam10_ext_cfg_enable_bits(cpu_f0, 0x170 + (sblink << 2), 1 << 3, 1 << 3);
 
-		/* Enables transmitter de-emphasis
-		 * This depends on the PCB design and the trace
-		 */
 		/* Disables command throttling */
 		set_fam10_ext_cfg_enable_bits(cpu_f0, 0x168, 1 << 10, 1 << 10);
 
