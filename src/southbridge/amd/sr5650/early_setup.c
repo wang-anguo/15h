@@ -236,8 +236,8 @@ void sr5650_htinit(void)
 		set_nbcfg_enable_bits(sr5650_f0, 0xac, (1 << 3) | (1 << 14), (1 << 3) | (1 << 14));
 		/* Enables transmitter de-emphasis */
 		set_nbcfg_enable_bits(sr5650_f0, 0xa4, 1 << 31, 1 << 31);
-		/* Enables transmitter de-emphasis level */
-		set_nbcfg_enable_bits(sr5650_f0, 0xa4, 0x7000000, 0x7000000); // -9.0dB
+		/* Enables transmitter de-emphasis level (-9.0 dB) */
+		set_nbcfg_enable_bits(sr5650_f0, 0xa4, 0x7000000, 0x7000000);
 		/* Sets training 0 time */
 		set_nbcfg_enable_bits(sr5650_f0, 0xa0, 0x3F, 0x14);
 
