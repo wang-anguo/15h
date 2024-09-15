@@ -353,17 +353,20 @@ config BOOTSPLASH_CONVERT_TEXT
         help
 	  Overlay text and build information onto the bootsplash image.
 
+config BOOTSPLASH_CONVERT_TEXT_OFFSET
+        string "Bootsplash vertical text offset"
+	default "+0+180"
+        depends on BOOTSPLASH_CONVERT_TEXT
+        help
+          Set the vertical offset from the image center
+
 config BOOTSPLASH_CONVERT_TEXT_BOOTMENU
         string "Boot menu key text"
         depends on BOOTSPLASH_CONVERT_TEXT
-        help
-          Display the boot menu key at the top left corner of the bootsplash.
 
 config BOOTSPLASH_CONVERT_TEXT_DISTRIBUTION
         string "Bootsplash distribution text"
         depends on BOOTSPLASH_CONVERT_TEXT
-        help
-          Overlay a distribution string onto the top right corner of the bootsplash.
 
 config BOOTSPLASH_CONVERT_TEXT_DISTRIBUTION_DATE
         bool "Append the build date to the distribution string"
@@ -372,8 +375,6 @@ config BOOTSPLASH_CONVERT_TEXT_DISTRIBUTION_DATE
 config BOOTSPLASH_CONVERT_TEXT_BRANCH
         string "Bootsplash branch text"
         depends on BOOTSPLASH_CONVERT_TEXT
-        help
-          Overlay a branch string onto the top right corner of the bootsplash.
 
 config BOOTSPLASH_CONVERT_TEXT_BRANCH_COMMIT
         bool "Append the git commit to the branch string"
