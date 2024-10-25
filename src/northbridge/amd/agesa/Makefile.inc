@@ -17,7 +17,13 @@ ifeq ($(CONFIG_NORTHBRIDGE_AMD_AGESA),y)
 
 subdirs-$(CONFIG_NORTHBRIDGE_AMD_AGESA_FAMILY12) += family12
 subdirs-$(CONFIG_NORTHBRIDGE_AMD_AGESA_FAMILY14) += family14
+subdirs-$(CONFIG_NORTHBRIDGE_AMD_AGESA_FAMILY15) += family15
 subdirs-$(CONFIG_NORTHBRIDGE_AMD_AGESA_FAMILY15_TN) += family15tn
 subdirs-$(CONFIG_NORTHBRIDGE_AMD_AGESA_FAMILY16_KB) += family16kb
+
+ifeq ($(CONFIG_AGESA_LEGACY_WRAPPER), y)
+romstage-y += agesawrapper.c
+ramstage-y += agesawrapper.c
+endif
 
 endif

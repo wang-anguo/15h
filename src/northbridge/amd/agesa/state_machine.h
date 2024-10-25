@@ -20,7 +20,8 @@
 #include <AGESA.h>
 #include <AMD.h>
 
-#define HAS_LEGACY_WRAPPER CONFIG(BINARYPI_LEGACY_WRAPPER)
+#define HAS_LEGACY_WRAPPER (CONFIG(BINARYPI_LEGACY_WRAPPER) || \
+	CONFIG(AGESA_LEGACY_WRAPPER))
 
 /* eventlog */
 void agesawrapper_trace(AGESA_STATUS ret, AMD_CONFIG_PARAMS *StdHeader, const char *func);
