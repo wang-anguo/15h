@@ -639,9 +639,6 @@ static void domain_enable_resources(struct device *dev)
 	/* Must be called after PCI enumeration and resource allocation */
 	printk(BIOS_DEBUG, "\nFam15 - %s: AmdInitMid.\n", __func__);
 
-#if CONFIG(AMD_SB_CIMX)
-	sb_After_Pci_Init();
-#endif
 	/* Enable MMIO on AMD CPU Address Map Controller */
 	amd_initcpuio();
 

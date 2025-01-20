@@ -192,7 +192,7 @@ chip northbridge/amd/agesa/family15/root_complex
 							register "vbat_high_limit_mv" = "3500"		# VBAT (+3V) high limit to 3.5V
 							register "vbat_low_limit_mv" = "2500"		# VBAT (+3V) low limit to 2.5V
 							register "smbus_aux" = "0"			# Device located on primary SMBUS
-							device pnp 5e on #hwm
+							device pnp 5e off #hwm
 							end
 						end #drivers/i2c/w83795
 					end # LPC

@@ -66,10 +66,12 @@ void platform_AfterS3LateRestore(struct sysinfo *cb, AMD_S3LATE_PARAMS *S3Late)
 
 void platform_BeforeInitMid(struct sysinfo *cb, AMD_MID_PARAMS *Mid)
 {
+	sb_After_Pci_Init();
 }
 
 void platform_AfterInitLate(struct sysinfo *cb, AMD_LATE_PARAMS *Late)
 {
+	sb_Late_Post();
 }
 
 void platform_AfterS3Save(struct sysinfo *cb, AMD_S3SAVE_PARAMS *S3Save)

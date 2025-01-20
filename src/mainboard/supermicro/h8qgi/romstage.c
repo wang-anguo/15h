@@ -28,6 +28,7 @@
 #include <northbridge/amd/agesa/family15/reset_test.h>
 #include <nb_cimx.h>
 #include <sb_cimx.h>
+#include <cbmem.h>
 #include <superio/nuvoton/wpcm450/wpcm450.h>
 #include <superio/winbond/common/winbond.h>
 #include <superio/winbond/w83627dhg/w83627dhg.h>
@@ -99,6 +100,8 @@ void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 
 	post_code(0x40);
 	agesawrapper_amdinitpost();
+
+	cbmem_initialize_empty();
 
 	post_code(0x41);
 	agesawrapper_amdinitenv();
