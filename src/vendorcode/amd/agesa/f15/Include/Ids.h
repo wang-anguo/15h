@@ -534,7 +534,20 @@ typedef enum {                        //vv- for debug reference only
       #pragma warning(disable: 4127)
       #define IDS_HDT_CONSOLE(f, s, ...)
     #else
-      #define IDS_HDT_CONSOLE(f, s, ...) printk (BIOS_DEBUG, s, ##__VA_ARGS__);
+      //#define IDS_HDT_CONSOLE(f, s, ...) printk (BIOS_DEBUG, s, ##__VA_ARGS__);
+      #define IDS_HDT_CONSOLE(f, s, ...) do {\
+		if (f == MAIN_FLOW) {\
+			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
+		} else if (f == CPU_TRACE) {\
+			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
+		} else if (f == HT_TRACE) {\
+			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
+		} else if (f == GNB_TRACE) {\
+			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
+		} else if (f == FCH_TRACE) {\
+			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
+		}\
+	} while(0)
     #endif
 
     #define IDS_HDT_CONSOLE_FLUSH_BUFFER(x)

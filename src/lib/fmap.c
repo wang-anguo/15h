@@ -88,7 +88,7 @@ static void setup_preram_cache(struct mem_region_device *cache_mrdev)
 		if (!check_signature(fmap))
 			goto register_cache;
 
-		printk(BIOS_ERR, "ERROR: FMAP cache corrupted?!\n");
+		printk(BIOS_ERR, "FMAP: cache corrupted?!\n");
 	}
 
 	/* In case we fail below, make sure the cache is invalid. */
