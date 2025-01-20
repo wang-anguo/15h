@@ -96,9 +96,9 @@
 #define BLDCFG_MEMORY_UDIMM_CAPABLE               TRUE
 #define BLDCFG_MEMORY_SODIMM_CAPABLE              FALSE
 #define BLDCFG_LIMIT_MEMORY_TO_BELOW_1TB          TRUE
-#define BLDCFG_MEMORY_ENABLE_BANK_INTERLEAVING    FALSE//TRUE
-#define BLDCFG_MEMORY_ENABLE_NODE_INTERLEAVING    FALSE//TRUE
-#define BLDCFG_MEMORY_CHANNEL_INTERLEAVING        FALSE//TRUE
+#define BLDCFG_MEMORY_ENABLE_BANK_INTERLEAVING    TRUE
+#define BLDCFG_MEMORY_ENABLE_NODE_INTERLEAVING    FALSE
+#define BLDCFG_MEMORY_CHANNEL_INTERLEAVING        TRUE
 #define BLDCFG_MEMORY_POWER_DOWN                  FALSE
 #define BLDCFG_POWER_DOWN_MODE                    POWER_DOWN_BY_CHANNEL
 #define BLDCFG_ONLINE_SPARE                       FALSE
@@ -210,7 +210,7 @@ CONST CPU_TO_CPU_PCB_LIMITS ROMDATA h8qgi_cpu2cpu_limit_list[2] =
 		HT_LIST_MATCH_ANY, HT_LIST_MATCH_ANY, HT_LIST_MATCH_ANY, HT_LIST_MATCH_ANY,
 
 		/* Set incoming and outgoing links to 16 bit widths, and 3.2GHz frequencies */
-		HT_WIDTH_16_BITS, HT_WIDTH_16_BITS, HT_FREQUENCY_LIMIT_3200M,
+		HT_WIDTH_16_BITS, HT_WIDTH_16_BITS, HT_FREQUENCY_LIMIT_2600M,
 	},
 
 	/* The 2nd element in the array merely terminates the list */
@@ -226,7 +226,7 @@ CONST IO_PCB_LIMITS ROMDATA h8qgi_io_limit_list[2] =
 		HT_LIST_MATCH_ANY, HT_LIST_MATCH_ANY, HT_LIST_MATCH_ANY,
 
 		/* Set upstream and downstream links to 16 bit widths, and limit frequencies to 3.2GHz */
-		HT_WIDTH_16_BITS, HT_WIDTH_16_BITS, HT_FREQUENCY_LIMIT_3200M, //Actually IO hub only support 2600M MAX
+		HT_WIDTH_16_BITS, HT_WIDTH_16_BITS, HT_FREQUENCY_LIMIT_2600M, //Actually IO hub only support 2600M MAX
 	},
 
 	/* The 2nd element in the array merely terminates the list */
