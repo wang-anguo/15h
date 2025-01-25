@@ -179,6 +179,11 @@ F15OrInitializeMsgBasedC1e (
     OptionMultiSocketConfiguration.ModifyCurrSocketPci (&PciAddress, AndMask, OrMask, StdHeader); // F4x128
 
     // Read F4x128[CoreCstateMode]
+    // TODO: Validate this
+    // IdentifyCore and GetPciAddress were added to set PciAddress.AddressValue
+    // otherwise the variable is uninitialized and causes an assertion in LibAmdPciRead
+    IdentifyCore (StdHeader, &Socket, &Module, &Core, &IgnoredSts);
+    GetPciAddress (StdHeader, Socket, Module, &PciAddress, &IgnoredSts);
     LibAmdPciRead (AccessWidth32, PciAddress, &LocalPciRegister, StdHeader);
     AndMask = 0xFFFFFFFF;
     OrMask = 0;
