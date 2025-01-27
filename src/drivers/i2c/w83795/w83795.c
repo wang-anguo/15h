@@ -237,7 +237,7 @@ static void w83795_init(struct device *dev, u8 dts_src)
 	if(DTS8_ENABLED) printk(BIOS_DEBUG, "DTS8 Enabled\n");
 	if(TR1_ENABLED) printk(BIOS_DEBUG, "TR1 Enabled\n");
 	if(TR2_ENABLED) printk(BIOS_DEBUG, "TR2 Enabled\n");
-	if(TR4_ENABLED) printk(BIOS_DEBUG, "TR3 Enabled\n");
+	if(TR3_ENABLED) printk(BIOS_DEBUG, "TR3 Enabled\n");
 	if(TR4_ENABLED) printk(BIOS_DEBUG, "TR4 Enabled\n");
 	if(TR5_ENABLED) printk(BIOS_DEBUG, "TR5 Enabled\n");
 	if(TR6_ENABLED) printk(BIOS_DEBUG, "TR6 Enabled\n");
