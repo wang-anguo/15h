@@ -69,4 +69,8 @@ config VGA_BIOS_ID
 	depends on VGA_BIOS
 	default "102b,0532"
 
+config VGA_BIOS_FILE
+	string
+	default "3rdparty/blobs/mainboard/supermicro/h8qgi/VGABIOS.bin"
+
 endif # BOARD_SUPERMICRO_H8QGI
