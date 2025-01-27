@@ -516,6 +516,7 @@ NbIommuAcpiInit (
 
   CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiInit Enter\n"));
 
+  // FIXME: this allocation fails (Fam15)
   // Get a buffer for IVRS
   Ivrs.BufferLength = IVRS_BUFFER_SIZE;
   Status = LibNbCallBack (PHCB_AmdAllocateBuffer, (UINTN)&Ivrs, &ConfigPtr->Northbridges[0]);
@@ -583,6 +584,7 @@ NbIommuAcpiFixup (
   ApicId = 0xFF;
   ApicBaseAddress = 0;
 
+  // FIXME: This function fails on Fam15 (see problems in NbIommuAcpiInit)
   CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiFixup Enter\n"));
 
   for (NorthbridgeId = 0; NorthbridgeId <= ConfigPtr->NumberOfNorthbridges; NorthbridgeId++) {

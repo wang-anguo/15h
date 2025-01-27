@@ -115,6 +115,7 @@ static u32 rd890_callout_entry(u32 func, uintptr_t data, void *config)
 
 	switch (func) {
 		case PHCB_AmdPortTrainingCompleted:
+			// TODO: called by src/vendorcode/amd/cimx/rd890/nbPcieInitEarly.c
 			break;
 
 		case PHCB_AmdPortResetDeassert:
@@ -130,22 +131,31 @@ static u32 rd890_callout_entry(u32 func, uintptr_t data, void *config)
 			break;
 
 		case PHCB_AmdPortResetSupported:
+			// TODO: called by src/vendorcode/amd/cimx/rd890/nbPcieLib.c
 			break;
 		case PHCB_AmdGeneratePciReset:
+			// TODO: called by src/vendorcode/amd/cimx/rd890/nbPcieLib.c
 			break;
 		case PHCB_AmdGetExclusionTable:
+			// TODO: called by src/vendorcode/amd/cimx/rd890/nbIommu.c
 			break;
 		case PHCB_AmdAllocateBuffer:
+			// TODO: required by src/vendorcode/amd/cimx/rd890/nbIommu.c
+			// reference: src/vendorcode/amd/agesa/f15tn/Proc/GNB/Modules/GnbIommuIvrs/GnbIommuIvrs.c
+			// here the heap manager allocates the buffer
 			break;
 		case PHCB_AmdUpdateApicInterruptMapping:
+			// TODO: called by src/vendorcode/amd/cimx/rd890/nbIoApic.c
 			break;
 		case PHCB_AmdFreeBuffer:
 			break;
 		case PHCB_AmdLocateBuffer:
 			break;
 		case PHCB_AmdReportEvent:
+			// TODO: called by src/vendorcode/amd/cimx/rd890/nbEventLog.c
 			break;
 		case PHCB_AmdPcieAsmpInfo:
+			// TODO: called by src/vendorcode/amd/cimx/rd890/nbPcieAspm.c
 			break;
 
 		case CB_AmdSetNbPorConfig:
@@ -168,6 +178,7 @@ static u32 rd890_callout_entry(u32 func, uintptr_t data, void *config)
 			nbConfigPtr->pNbConfig->IoApicBaseAddress = IO_APIC_ADDR;
 #ifndef IOMMU_SUPPORT_DISABLE //TODO enable iommu
 			/* SBIOS must alloc 16K memory for IOMMU MMIO */
+			/*
 			UINT32  MmcfgBarAddress; //using default IOmmuBaseAddress
 			LibNbPciRead(nbConfigPtr->NbPciAddress.AddressValue | 0x1C,
 					AccessWidth32,
@@ -177,7 +188,8 @@ static u32 rd890_callout_entry(u32 func, uintptr_t data, void *config)
 			if (MmcfgBarAddress != 0) {
 				nbConfigPtr->IommuBaseAddress = MmcfgBarAddress;
 			}
-			nbConfigPtr->IommuBaseAddress = 0; //disable iommu
+			*/
+			nbConfigPtr->pNbConfig->IommuBaseAddress = 0xFDF00000; // TODO: define this, must match in src/northbridge/amd/agesa/family15/northbridge.c
 #endif
 			break;
 

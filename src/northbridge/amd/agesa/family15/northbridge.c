@@ -328,6 +328,18 @@ static void nb_read_resources(struct device *dev)
 	 * the CPU_CLUSTER.
 	 */
 	mmconf_resource(dev, 0xc0010058);
+
+	// TODO: Add IOMMU buffer reservation here
+	// look at src/northbridge/amd/agesa/family15tn/iommu.c as a reference
+#ifndef IOMMU_SUPPORT_DISABLE
+	struct resource *resource = new_resource(dev, 0x44);
+	resource->base = 0xFDF00000; // TODO define this somewhere
+	resource->size = 0x4000; // taken from raptor, southbridge/amd/sr5650/sr5650.c: sr5650_iommu_read_resources
+	resource->limit = 0xFFFFFFFFUL;
+	resource->align = 14;
+	resource->gran = 14;
+	resource->flags = IORESOURCE_MEM | IORESOURCE_RESERVE;
+#endif
 }
 
 static void set_resource(struct device *dev, struct resource *resource, u32 nodeid)
