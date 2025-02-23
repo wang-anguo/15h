@@ -5,6 +5,7 @@ junit.xml
 abuild*.xml
 .config
 .config.old
+configs/*.old
 defconfig
 .coreboot-version
 .xcompile
