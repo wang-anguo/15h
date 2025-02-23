@@ -1,0 +1,263 @@
+#
+# This file is part of the coreboot project.
+#
+# Copyright (C) 2011 - 2012 Advanced Micro Devices, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+chip northbridge/amd/agesa/family15/root_complex
+	device cpu_cluster 0 on
+		chip cpu/amd/agesa/family15
+			device lapic 0x10 on end
+		end
+	end
+	device domain 0 on
+		subsystemid 0x15d9 0xab11 inherit #Supermicro
+		chip northbridge/amd/agesa/family15 # CPU side of HT root complex
+			device pci 18.0 on     # Put IO-HUB at link_num 0, Instead of HT Link topology
+				chip northbridge/amd/cimx/rd890 # Southbridge PCI side of HT Root complex
+					device pci 0.0 on  end # HT Root Complex 0x9600
+					device pci 0.1 on end # CLKCONFIG
+					device pci 2.0 on  end # GPP1 Port0  x16 SLOT4, 0x5A16
+					device pci 3.0 on end # GPP1 Port1
+					device pci 4.0 on end # GPP3a Port0  x4 SAS
+					device pci 5.0 off end # GPP3a Port1
+					device pci 6.0 off end # GPP3a Port2
+					device pci 7.0 off end # GPP3a Port3
+					device pci 8.0 off end # NB/SB Link P2P bridge, should be hidden at boot time
+					device pci 9.0 on end # GPP3a Port4  x1 NC
+					device pci a.0 on end # GPP3a Port5  x1 NC
+					device pci b.0 off end # GPP2 Port0 (Not for sr5650)
+					device pci c.0 off end # GPP2 Port1 (Not for sr5650/sr5670)
+					device pci d.0 off  end # GPP3b Port0 (Not for sr5650/sr5670) 0x5A1E, Intel 82576
+					register "gpp1_configuration" = "1"   # Configuration 16:0 default
+					#register "gpp2_configuration" = "0"   # Configuration 8:8
+					register "gpp3a_configuration" = "2"   # 2 Configuration 4:1:1:0:0:0, 11 Configuration 1:1:1:1:1:1
+					register "port_enable" = "0x61f"
+				end #northbridge/amd/cimx/rd890
+				chip southbridge/amd/cimx/sb700 # it is under NB/SB Link, but on the same pci bus
+					device pci 11.0 on end # SATA
+					device pci 12.0 on end # USB1
+					device pci 12.1 on end # USB1
+					device pci 12.2 on end # USB1
+					device pci 13.0 on end # USB2
+					device pci 13.1 on end # USB2
+					device pci 13.2 on end # USB2
+					device pci 14.0 on end # SM
+					device pci 14.1 off end # IDE  0x439c
+					device pci 14.2 off end # HDA  0x4383, h8scm not have codec.
+					device pci 14.3 on # LPC  0x439d
+						chip superio/winbond/w83627dhg
+							device pnp 2e.0 off #  Floppy
+								io 0x60 = 0x3f0
+								irq 0x70 = 6
+								drq 0x74 = 2
+							end
+							device pnp 2e.1 off #  Parallel Port
+								io 0x60 = 0x378
+								irq 0x70 = 7
+							end
+							device pnp 2e.2 on  #  Com1
+								io 0x60 = 0x3f8
+								irq 0x70 = 4
+							end
+							device pnp 2e.3 on  #  Com2
+								io 0x60 = 0x2f8
+								irq 0x70 = 3
+							end
+							## though UARTs are on the NUVOTON BMC, superio only used to support PS2 KB/MS##
+							device pnp 2e.5 on #  PS/2 keyboard & mouse
+								io 0x60 = 0x60
+								io 0x62 = 0x64
+								irq 0x70 = 0x01 #keyboard
+								irq 0x72 = 0x0C #mouse
+							end
+							device pnp 2e.6 off #  SPI
+							end
+							device pnp 2e.307 off #  GPIO6
+							end
+							device pnp 2e.8 off #  WDTO#, PLED
+							end
+							device pnp 2e.009 off #  GPIO2
+							end
+							device pnp 2e.109 off #  GPIO3
+							end
+							device pnp 2e.209 off #  GPIO4
+							end
+							device pnp 2e.309 off #  GPIO5
+							end
+							device pnp 2e.a off #  ACPI
+							end
+							device pnp 2e.b off # HWM
+								io 0x60 = 0x290
+							end
+							device pnp 2e.c off # PECI, SST
+							end
+						end #superio/winbond/w83627dhg
+						chip drivers/i2c/w83795
+							# Enable Digital Temperature Sensors
+							register "dtse" = "0x01"			# DTS1
+							# Enable Voltage Sensors
+							register "volt_ctrl1" = "0x01"			# VSEN1
+							register "volt_ctrl2" = "0x00"			# None
+							# Enable Temperature Sensors
+							register "temp_ctrl1" = "0x20"			# DTS
+							register "temp_ctrl2" = "0x00"			# None
+							# Enable Fan Sensors
+							register "fanin_ctrl1" = "0x1F"			# FANIN1 - FANIN5
+							register "fanin_ctrl2" = "0x00"			# None
+							# Select Temperature Sources for Fan Control
+							register "temp1_source_select" = "0x01"		# Temperature1 = DTS1 (Socket1)
+							register "temp2_source_select" = "0x01"		# Temperature2 = DTS2 (not used)
+							register "temp3_source_select" = "0x01"		# Temperature3 = DTS3 (not used)
+							register "temp4_source_select" = "0x01"		# Temperature4 = DTS4 (not used)
+							register "temp5_source_select" = "0x00"		# Temperature5 = TR5 (not used)
+							register "temp6_source_select" = "0x00"		# Temperature6 = TR6 (not used)
+							# Assign Temperatures to Fan Zones
+							register "temp1_fan_select" = "0x01"		# Temperature1 controls Fan1
+							register "temp2_fan_select" = "0x00"		# Temperature2 controls nothing
+							register "temp3_fan_select" = "0x00"		# Temperature3 controls nothing
+							register "temp4_fan_select" = "0x00"		# Temperature4 controls nothing
+							register "temp5_fan_select" = "0x00"		# Temperature5 controls nothing
+							register "temp6_fan_select" = "0x00"		# Temperature6 controls nothing
+							# Target Temperatures (C), ThermalCruise Mode
+							register "temp1_target_temperature" = "40"
+							register "temp2_target_temperature" = "40"
+							register "temp3_target_temperature" = "40"
+							register "temp4_target_temperature" = "40"
+							register "temp5_target_temperature" = "40"
+							register "temp6_target_temperature" = "40"
+							# Target Hysteresis Values (+/- C), ThermalCruise and SmartFan Modes
+							register "temp1_target_hysteresis" = "1"
+							register "temp2_target_hysteresis" = "1"
+							register "temp3_target_hysteresis" = "1"
+							register "temp4_target_hysteresis" = "1"
+							register "temp5_target_hysteresis" = "1"
+							register "temp6_target_hysteresis" = "1"
+							# Critical Temperatures (C) to Full Speed Fans, ThermalCruise and SmartFan Modes
+							register "temp1_critical_temperature" = "62"
+							register "temp2_critical_temperature" = "62"
+							register "temp3_critical_temperature" = "62"
+							register "temp4_critical_temperature" = "62"
+							register "temp5_critical_temperature" = "62"
+							register "temp6_critical_temperature" = "62"
+							# Critical Hysteresis Values (+/- C) to stop Full speeding fans, ThermalCruise and SmartFan Modes
+							register "temp1_critical_hysteresis" = "10"
+							register "temp2_critical_hysteresis" = "10"
+							register "temp3_critical_hysteresis" = "10"
+							register "temp4_critical_hysteresis" = "10"
+							register "temp5_critical_hysteresis" = "10"
+							register "temp6_critical_hysteresis" = "10"
+							# Minimum Fan speeds (%), ThermalCruise and SmartFan Modes
+							register "fan1_nonstop" = "14"
+							register "fan2_nonstop" = "14"
+							register "fan3_nonstop" = "14"
+							register "fan4_nonstop" = "14"
+							register "fan5_nonstop" = "14"
+							register "fan6_nonstop" = "14"
+							register "fan7_nonstop" = "14"
+							register "fan8_nonstop" = "14"
+							# Time delays to step up/down fan speeds (deciseconds), ThermalCruise and SmartFan Modes
+							register "step_up_time" = "5"
+							register "step_down_time" = "10"
+							# Power on speed of fans (%)
+							register "poweron_speed" = "75"
+							# Fan speeds (%)
+							register "fan1_duty" = "100"
+							register "fan2_duty" = "100"
+							register "fan3_duty" = "100"
+							register "fan4_duty" = "100"
+							register "fan5_duty" = "100"
+							register "fan6_duty" = "100"
+							register "fan7_duty" = "100"
+							register "fan8_duty" = "100"
+							# SmartFan Control Curve
+							register "sfiv_table[0].temperatures" = "{ 30, 35, 40, 45, 50, 55, 60 }"
+							register "sfiv_table[1].temperatures" = "{ 30, 35, 40, 45, 50, 55, 60 }"
+							register "sfiv_table[2].temperatures" = "{ 30, 35, 40, 45, 50, 55, 60 }"
+							register "sfiv_table[3].temperatures" = "{ 30, 35, 40, 45, 50, 55, 60 }"
+							register "sfiv_table[4].temperatures" = "{ 30, 35, 40, 45, 50, 55, 60 }"
+							register "sfiv_table[5].temperatures" = "{ 30, 35, 40, 45, 50, 55, 60 }"
+							register "sfiv_table[0].fan_percents" = "{ 15, 15, 20, 30, 40, 50, 100 }"
+							register "sfiv_table[1].fan_percents" = "{ 15, 15, 20, 30, 40, 50, 100 }"
+							register "sfiv_table[2].fan_percents" = "{ 15, 15, 20, 30, 40, 50, 100 }"
+							register "sfiv_table[3].fan_percents" = "{ 15, 15, 20, 30, 40, 50, 100 }"
+							register "sfiv_table[4].fan_percents" = "{ 15, 15, 20, 30, 40, 50, 100 }"
+							register "sfiv_table[5].fan_percents" = "{ 15, 15, 20, 30, 40, 50, 100 }"
+							# Fan Control Mode, 0:Manual, 1:SpeedCruise (not implemented), 2:ThermalCruise, 3:SmartFan (recommended)
+							register "fan_mode" = "3"
+							# Temperature Alarms, could be used to trigger SMI#
+							register "tr1_critical_temperature" = "64"
+							register "tr2_critical_temperature" = "64"
+							register "tr3_critical_temperature" = "64"
+							register "tr4_critical_temperature" = "64"
+							register "tr5_critical_temperature" = "64"
+							register "tr6_critical_temperature" = "64"
+							register "dts_critical_temperature" = "64"
+							register "tr1_critical_hysteresis" = "60"
+							register "tr2_critical_hysteresis" = "60"
+							register "tr3_critical_hysteresis" = "60"
+							register "tr4_critical_hysteresis" = "60"
+							register "tr5_critical_hysteresis" = "60"
+							register "tr6_critical_hysteresis" = "60"
+							register "dts_critical_hysteresis" = "60"
+							register "tr1_warning_temperature" = "60"
+							register "tr2_warning_temperature" = "60"
+							register "tr3_warning_temperature" = "60"
+							register "tr4_warning_temperature" = "60"
+							register "tr5_warning_temperature" = "60"
+							register "tr6_warning_temperature" = "60"
+							register "dts_warning_temperature" = "60"
+							register "tr1_warning_hysteresis" = "56"
+							register "tr2_warning_hysteresis" = "56"
+							register "tr3_warning_hysteresis" = "56"
+							register "tr4_warning_hysteresis" = "56"
+							register "tr5_warning_hysteresis" = "56"
+							register "tr6_warning_hysteresis" = "56"
+							register "dts_warning_hysteresis" = "56"
+							# Voltage Alarms, could be used to trigger SMI#
+							register "vsen1_high_limit_mv" = "1500"
+							register "vsen1_low_limit_mv" = "900"
+							register "vsen2_high_limit_mv" = "1500"
+							register "vsen2_low_limit_mv" = "900"
+							register "vsen3_high_limit_mv" = "1500"
+							register "vsen3_low_limit_mv" = "900"
+							register "vsen4_high_limit_mv" = "1500"
+							register "vsen4_low_limit_mv" = "900"
+							register "vsen5_high_limit_mv" = "1600"
+							register "vsen5_low_limit_mv" = "1100"
+							register "vsen6_high_limit_mv" = "1600"
+							register "vsen6_low_limit_mv" = "1100"
+							# SMBUS Location
+							register "smbus_aux" = "0"			# Device located on primary SMBUS
+							device pnp 5e on #hwm
+							end
+						end #drivers/i2c/w83795
+					end # LPC
+					device pci 14.4 on end # PCI 0x4384
+					device pci 14.5 on end # USB 3
+					register "boot_switch_sata_ide" = "0"   # 0: boot from SATA. 1: IDE
+				end # southbridge/amd/cimx/sb700
+			end # device pci 18.0
+
+			device pci 18.1 on end
+			device pci 18.2 on end
+			device pci 18.3 on end
+			device pci 18.4 on end
+			device pci 18.5 on end #f15
+
+			register "spdAddrLookup" = "
+			{
+				{ {0xA4, 0xA6}, {0xA0, 0xA2}, {0x00, 0x00}, {0x00, 0x00}, }, // socket 0
+				{ {0x00, 0x00}, {0x00, 0x00}, {0x00, 0x00}, {0x00, 0x00}, }, // socket 1 (unused)
+			}"
+		end #chip northbridge/amd/agesa/family15 # CPU side of HT root complex
+	end #domain
+end #northbridge/amd/agesa/family15/root_complex
