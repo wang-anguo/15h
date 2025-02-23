@@ -84,7 +84,9 @@
 
 static int smbus_r8(struct device *dev, uint8_t reg) {
 #if CONFIG(SOUTHBRIDGE_AMD_CIMX_SB700)
-	return do_smbus_read_byte(SMBUS_IO_BASE, W83795_DEV, reg);
+	struct drivers_i2c_w83795_config *config = dev->chip_info;
+	if(!config->smbus_aux) return do_smbus_read_byte(SMBUS_IO_BASE, W83795_DEV, reg);
+	else return do_smbus_read_byte(SMBUS_AUX_IO_BASE, W83795_DEV, reg);
 #else
 	return smbus_read_byte(dev, reg);
 #endif
@@ -92,7 +94,9 @@ static int smbus_r8(struct device *dev, uint8_t reg) {
 
 static int smbus_w8(struct device *dev, uint8_t reg, uint8_t value) {
 #if CONFIG(SOUTHBRIDGE_AMD_CIMX_SB700)
-	return do_smbus_write_byte(SMBUS_IO_BASE, W83795_DEV, reg, value);
+	struct drivers_i2c_w83795_config *config = dev->chip_info;
+	if(!config->smbus_aux) return do_smbus_write_byte(SMBUS_IO_BASE, W83795_DEV, reg, value);
+	else return do_smbus_write_byte(SMBUS_AUX_IO_BASE, W83795_DEV, reg, value);
 #else
 	return smbus_write_byte(dev, reg, value);
 #endif
@@ -171,7 +175,6 @@ static void w83795_init(struct device *dev, u8 dts_src)
 	uint8_t val;
 	const char *label;
 	uint8_t fan_mode;
-	//uint16_t limit_value;
 
 	fan_mode = config->fan_mode;
 
