@@ -26,9 +26,9 @@ chip northbridge/amd/agesa/family15/root_complex
 				chip northbridge/amd/cimx/rd890 # Southbridge PCI side of HT Root complex
 					device pci 0.0 on  end # HT Root Complex 0x9600
 					device pci 0.1 off end # CLKCONFIG
-					device pci 2.0 on  end # GPP1 Port0  x16 SLOT4, 0x5A16
+					device pci 2.0 on  end # GPP1 Port0  x16 SLOT4
 					device pci 3.0 off end # GPP1 Port1
-					device pci 4.0 off end # GPP3a Port0  x4 SAS
+					device pci 4.0 on  end # GPP3a Port0  x4 SAS
 					device pci 5.0 off end # GPP3a Port1
 					device pci 6.0 off end # GPP3a Port2
 					device pci 7.0 off end # GPP3a Port3
@@ -41,7 +41,7 @@ chip northbridge/amd/agesa/family15/root_complex
 					register "gpp1_configuration" = "0"   # Configuration 16:0 default
 					register "gpp2_configuration" = "1"   # Configuration 8:8
 					register "gpp3a_configuration" = "2"   # 2 Configuration 4:1:1:0:0:0, 11 Configuration 1:1:1:1:1:1
-					register "port_enable" = "0x2104"
+					register "port_enable" = "0x2014" # 0b10000100000100
 				end #northbridge/amd/cimx/rd890
 				chip southbridge/amd/cimx/sb700 # it is under NB/SB Link, but on the same pci bus
 					device pci 11.0 on end # SATA
