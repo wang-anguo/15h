@@ -1,6 +1,25 @@
 if PAYLOAD_SEABIOS
 
 choice
+        prompt "SeaBIOS repository"
+        default SEABIOS_GIT_UPSTREAM
+
+config SEABIOS_GIT_OFFICIAL
+        bool "Official"
+        help
+          Official SeaBIOS Repository
+config SEABIOS_GIT_CUSTOM
+        bool "Custom"
+        help
+          Custom SeaBIOS Repository
+endchoice
+
+config SEABIOS_GIT_CUSTOM_REPOSITORY
+	string "Custom git repository"
+        depends on SEABIOS_GIT_CUSTOM
+        default "https://review.coreboot.org/seabios.git"
+
+choice
 	prompt "SeaBIOS version"
 	default SEABIOS_STABLE
 

@@ -1,8 +1,11 @@
+REPO-$(CONFIG_SEABIOS_GIT_OFFICIAL)=https://review.coreboot.org/seabios.git
+REPO-$(CONFIG_SEABIOS_GIT_CUSTOM)=$(CONFIG_SEABIOS_GIT_CUSTOM_REPOSITORY)
+
 TAG-$(CONFIG_SEABIOS_MASTER)=origin/master
 TAG-$(CONFIG_SEABIOS_STABLE)=a5cab58e9a3fb6e168aba919c5669bea406573b4
 TAG-$(CONFIG_SEABIOS_REVISION)=$(CONFIG_SEABIOS_REVISION_ID)
 
-project_git_repo=https://review.coreboot.org/seabios.git
+project_git_repo=$(REPO-y)
 project_dir=seabios
 
 unexport KCONFIG_AUTOHEADER
