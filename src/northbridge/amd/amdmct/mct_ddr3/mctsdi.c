@@ -282,7 +282,7 @@ uint8_t fam15_rttwr(struct DCTStatStruc *pDCTstat, uint8_t dct, uint8_t dimm, ui
 		}
 	}
 
-	printk(BIOS_INFO, "DIMM %d RttWr: %01x\n", dimm, term);
+	printk(BIOS_SPEW, "DIMM %d RttWr: %01x\n", dimm, term);
 
 	return term;
 }
@@ -680,7 +680,7 @@ uint8_t fam15_rttnom(struct DCTStatStruc *pDCTstat, uint8_t dct, uint8_t dimm, u
 		}
 	}
 
-	printk(BIOS_INFO, "DIMM %d RttNom: %01x\n", dimm, term);
+	printk(BIOS_SPEW, "DIMM %d RttNom: %01x\n", dimm, term);
 	return term;
 }
 
@@ -740,7 +740,7 @@ static void mct_SendMrsCmd(struct DCTStatStruc *pDCTstat, u8 dct, u32 EMRS)
 	u32 dev = pDCTstat->dev_dct;
 	u32 val;
 
-	printk(BIOS_DEBUG, "%s: Start\n", __func__);
+	printk(BIOS_SPEW, "%s: Start\n", __func__);
 
 	val = Get_NB32_DCT(dev, dct, 0x7c);
 	val &= ~0x00ffffff;
@@ -752,7 +752,7 @@ static void mct_SendMrsCmd(struct DCTStatStruc *pDCTstat, u8 dct, u32 EMRS)
 		val = Get_NB32_DCT(dev, dct, 0x7c);
 	} while (val & (1 << SendMrsCmd));
 
-	printk(BIOS_DEBUG, "%s: Done\n", __func__);
+	printk(BIOS_SPEW, "%s: Done\n", __func__);
 }
 
 u32 mct_MR2(struct MCTStatStruc *pMCTstat,
