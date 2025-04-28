@@ -155,21 +155,20 @@ PciePreTrainingInit (
   }
   for (CoreId = 0; CoreId <= MAX_CORE_ID; CoreId++) {
     CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_TRACE), "    CoreId %d  CoreSetting = 0x%x\n", CoreId, *((UINT32*)&pConfig->pPcieConfig->CoreSetting[CoreId])));
-    //if (pPcieConfig->CoreSetting[CoreId].CoreDisabled == OFF) {
+    if (pPcieConfig->CoreSetting[CoreId].CoreDisabled == OFF) {
       //Configure cores
-    if (pPcieConfig->CoreSetting[CoreId].SkipConfiguration == OFF) {
-      PcieLibSetCoreConfiguration (CoreId, pConfig);
-    }
+      if (pPcieConfig->CoreSetting[CoreId].SkipConfiguration == OFF) {
+        PcieLibSetCoreConfiguration (CoreId, pConfig);
+      }
       //Init core registers
-    PcieLibCommonCoreInit (CoreId, pConfig);
-    //}
+      PcieLibCommonCoreInit (CoreId, pConfig);
+    }
   }
   PcieLibPreTrainingInit (pConfig);
   for (CoreId = 0; CoreId <= MAX_CORE_ID; CoreId++) {
     CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_TRACE), "    CoreId %d  CoreSetting = 0x%x\n", CoreId, *((UINT32*)&pConfig->pPcieConfig->CoreSetting[CoreId])));
     //Init CPL buffer allocation
-    //if (pPcieConfig->CoreSetting[CoreId].CoreDisabled == OFF && pPcieConfig->CoreSetting[CoreId].CplBufferAllocation == ON) {
-    if (pPcieConfig->CoreSetting[CoreId].CplBufferAllocation == ON) {
+    if (pPcieConfig->CoreSetting[CoreId].CoreDisabled == OFF && pPcieConfig->CoreSetting[CoreId].CplBufferAllocation == ON) {
       PcieLibCplBufferAllocation (CoreId, pConfig);
     }
   }
@@ -197,10 +196,10 @@ PcieAfterTrainingInit (
 
   pPcieConfig = GET_PCIE_CONFIG_PTR (pConfig);
   for (CoreId = 0; CoreId <= MAX_CORE_ID; CoreId++) {
-//    if (pPcieConfig->CoreSetting[CoreId].CoreDisabled == OFF) {
+    if (pPcieConfig->CoreSetting[CoreId].CoreDisabled == OFF) {
       //Configure cores
     PcieLibCoreAfterTrainingInit (CoreId, pConfig);
-//    }
+    }
   }
   //Hide all Ports
   PcieLibHidePorts (pConfig);

@@ -89,8 +89,18 @@ NbLibEarlyPostInitValidateInput (
 
   Status = AGESA_SUCCESS;
   NbInfo = LibNbGetRevisionInfo (pConfig);
-  if (NbInfo.Type == NB_UNKNOWN) {
-    return  AGESA_FATAL;
+  switch(NbInfo.Type) {
+    case NB_SR5690:
+      CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (NbConfigPtr), CIMX_NB_TRACE), "[NB]SR5690 Found\n"));
+      break;
+    case NB_SR5670:
+      CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (NbConfigPtr), CIMX_NB_TRACE), "[NB]SR5670 Found\n"));
+      break;
+    case NB_SR5650:
+      CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (NbConfigPtr), CIMX_NB_TRACE), "[NB]SR5650 Found\n"));
+      break;
+    case NB_UNKNOWN:
+      return AGESA_FATAL;
   }
   pNbConfig = GET_NB_CONFIG_PTR (pConfig);
   if (pNbConfig->sHeader.InitializerID != INITIALIZED_BY_INITIALIZER) {

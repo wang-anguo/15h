@@ -536,15 +536,11 @@ typedef enum {                        //vv- for debug reference only
     #else
       //#define IDS_HDT_CONSOLE(f, s, ...) printk (BIOS_DEBUG, s, ##__VA_ARGS__);
       #define IDS_HDT_CONSOLE(f, s, ...) do {\
-		if (f == MAIN_FLOW) {\
-			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
-		} else if (f == CPU_TRACE) {\
-			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
-		} else if (f == HT_TRACE) {\
-			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
-		} else if (f == GNB_TRACE) {\
-			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
-		} else if (f == FCH_TRACE) {\
+		if (f == MEM_GETREG) {\
+			printk (BIOS_SPEW, s, ##__VA_ARGS__);\
+		} else if (f == MEM_SETREG) {\
+			printk (BIOS_SPEW, s, ##__VA_ARGS__);\
+		} else { \
 			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
 		}\
 	} while(0)

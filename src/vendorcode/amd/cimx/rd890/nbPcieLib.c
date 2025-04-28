@@ -1162,7 +1162,7 @@ PcieLibValidateGfxConfig (
     if (pPcieConfig->CoreConfiguration[CoreId] != GFX_CONFIG_AABB &&
       pPcieConfig->CoreConfiguration[CoreId] != GFX_CONFIG_AAAA) {
       //We have received request for unknown configuration.
-      //pPcieConfig->CoreSetting[CoreId].CoreDisabled = ON;
+      pPcieConfig->CoreSetting[CoreId].CoreDisabled = ON;
       pPcieConfig->PortConfiguration[PortId].PortPresent = 0;
       pPcieConfig->PortConfiguration[PortId - 1].PortPresent = 0;
       return AGESA_WARNING;

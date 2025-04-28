@@ -41,7 +41,7 @@ chip northbridge/amd/agesa/family15/root_complex
 					register "gpp1_configuration" = "0"   # Configuration 16:0 default
 					register "gpp2_configuration" = "1"   # Configuration 8:8
 					register "gpp3a_configuration" = "2"   # 2 Configuration 4:1:1:0:0:0, 11 Configuration 1:1:1:1:1:1
-					register "port_enable" = "0x2014" # 0b10000100000100
+					register "port_enable" = "0x2014" # 0b10000000010100
 				end #northbridge/amd/cimx/rd890
 				chip southbridge/amd/cimx/sb700 # it is under NB/SB Link, but on the same pci bus
 					device pci 11.0 on end # SATA

@@ -90,7 +90,7 @@ PcieLibLateInit (
   LibNbDisableClkConfig (pConfig);
   // Restore Core setting from scratch
   for (CoreId = 0; CoreId <= MAX_CORE_ID; CoreId++) {
-//    if (PcieLibIsCoreAccessible (CoreId, pConfig) && pPcieConfig->CoreSetting[CoreId].CoreDisabled != ON ) {
+    if (PcieLibIsValidCoreId (CoreId, pConfig) && pPcieConfig->CoreSetting[CoreId].CoreDisabled != ON ) {
     UINT32  CoreAddress;
     CoreAddress = PcieLibGetCoreAddress (CoreId, pConfig);
     LibNbPciIndexRead (
@@ -100,9 +100,9 @@ PcieLibLateInit (
       (UINT32*)&pPcieConfig->CoreSetting[CoreId],
       pConfig
       );
-//  } else {
-//    pPcieConfig->CoreSetting[CoreId].CoreDisabled = ON;
-//  }
+  } else {
+    pPcieConfig->CoreSetting[CoreId].CoreDisabled = ON;
+  }
 //    CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_TRACE), "   Recover Core Setting CoreId %d Setting %x Enter\n", CoreId, (UINT32)(pPcieConfig->CoreSetting[CoreId])));
   }
   // Restore port Setting from scratch
@@ -158,7 +158,7 @@ PcieLibValidatePortStateInit (
   LibNbDisableClkConfig (pConfig);
   // Restore Core setting from scratch
   for (CoreId = 0; CoreId <= MAX_CORE_ID; CoreId++) {
-//    if (PcieLibIsCoreAccessible (CoreId, pConfig) && pPcieConfig->CoreSetting[CoreId].CoreDisabled != ON ) {
+    if (PcieLibIsValidCoreId (CoreId, pConfig) && pPcieConfig->CoreSetting[CoreId].CoreDisabled != ON ) {
     UINT32  CoreAddress;
     CoreAddress = PcieLibGetCoreAddress (CoreId, pConfig);
     LibNbPciIndexRead (
@@ -168,9 +168,9 @@ PcieLibValidatePortStateInit (
       (UINT32*)&pPcieConfig->CoreSetting[CoreId],
       pConfig
       );
-//  } else {
-//    pPcieConfig->CoreSetting[CoreId].CoreDisabled = ON;
-//  }
+  } else {
+    pPcieConfig->CoreSetting[CoreId].CoreDisabled = ON;
+  }
 //    CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_TRACE), "   Recover Core Setting CoreId %d Setting %x Enter\n", CoreId, (UINT32)(pPcieConfig->CoreSetting[CoreId])));
   }
   // Restore port Setting from scratch

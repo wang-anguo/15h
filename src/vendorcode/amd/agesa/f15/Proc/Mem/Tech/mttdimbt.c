@@ -618,7 +618,6 @@ MemTCompare1ClPatternByte (
     j++;
   }
 
-  IDS_HDT_CONSOLE_DEBUG_CODE (
     IDS_HDT_CONSOLE (MEM_FLOW, "\n\t\t\t        -");
     for (i = 0, j -= 8; i < 8; i++, j++) {
       IDS_HDT_CONSOLE (MEM_FLOW, " %02x", Buffer[j]);
@@ -628,7 +627,6 @@ MemTCompare1ClPatternByte (
       IDS_HDT_CONSOLE (MEM_FLOW, " %02x", Pattern[j]);
     }
     IDS_HDT_CONSOLE (MEM_FLOW, "\n\n");
-  );
 
   return Pass;
 }
@@ -1183,7 +1181,6 @@ MemTCompare1ClPatternOptByte (
     j++;
   }
 
-  IDS_HDT_CONSOLE_DEBUG_CODE (
     IDS_HDT_CONSOLE (MEM_FLOW, "\n\t\t\tPass/Fail -");
     for (i = 0, j -= 8; i < 8; i++, j++) {
       IDS_HDT_CONSOLE (MEM_FLOW, "  %c", (Buffer[j] == Pattern[j]) ? 'P' : '.');
@@ -1197,7 +1194,6 @@ MemTCompare1ClPatternOptByte (
       IDS_HDT_CONSOLE (MEM_FLOW, " %02x", Pattern[j]);
     }
     IDS_HDT_CONSOLE (MEM_FLOW, "\n\n");
-  );
 
   return Pass;
 }

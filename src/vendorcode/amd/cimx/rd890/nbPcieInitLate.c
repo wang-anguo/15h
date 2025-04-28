@@ -285,6 +285,7 @@ PcieLateInitCores (
   Status = AGESA_SUCCESS;
   pPcieConfig = GET_PCIE_CONFIG_PTR (pConfig);
   for (CoreId = 0; CoreId <= MAX_CORE_ID; CoreId++) {
+    if (pPcieConfig->CoreSetting[CoreId].CoreDisabled == OFF) {
     CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_TRACE), "   Init CoreId [%d]\n", CoreId));
     if (pPcieConfig->CoreSetting[CoreId].PowerOffPllInL1 == ON) {
       PcieLibEnablePllPowerOffInL1 (CoreId, pConfig);
@@ -295,6 +296,7 @@ PcieLateInitCores (
     PcieLibMiscLateCoreSetting (CoreId, pConfig);
     PcieLibManageTxClock   (CoreId, pConfig);
     PcieLibManageLclkClock (CoreId, pConfig);
+  }
   }
 #ifndef VC1_SUPPORT_DISABLE
   if (NB_SBDFO == 0 && pPcieConfig->PcieConfiguration.NbSbVc1 == ON) {
