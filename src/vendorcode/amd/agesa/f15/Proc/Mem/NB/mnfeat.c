@@ -780,7 +780,6 @@ MemNPrepareRcvrEnDlySeedNb (
     NBPtr->SetTrainDly (NBPtr, AccessRcvEnDly, DIMM_BYTE_ACCESS (ChipSel >> 1, ByteLane), SeedGross << 5);
   }
 
-  IDS_HDT_CONSOLE_DEBUG_CODE (
     if (Pass == 1) {
       IDS_HDT_CONSOLE (MEM_FLOW, "\t\t\tSeedValue: ");
       for (ByteLane = 0; ByteLane < (MCTPtr->Status[SbEccDimms] ? 9 : 8); ByteLane++) {
@@ -797,7 +796,6 @@ MemNPrepareRcvrEnDlySeedNb (
       IDS_HDT_CONSOLE (MEM_FLOW, "%03x ", SeedPre[ByteLane]);
     }
     IDS_HDT_CONSOLE (MEM_FLOW, "\n");
-  );
 
   NBPtr->FamilySpecificHook[RegAccessFence] (NBPtr, NULL);
 }
