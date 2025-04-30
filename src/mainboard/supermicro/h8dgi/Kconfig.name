@@ -1,0 +1,2 @@
+config BOARD_SUPERMICRO_H8DGI
+	bool "H8DGI"
