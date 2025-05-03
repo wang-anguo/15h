@@ -26,22 +26,22 @@ chip northbridge/amd/agesa/family15/root_complex
 				chip northbridge/amd/cimx/rd890 # Southbridge PCI side of HT Root complex
 					device pci 0.0 on  end # HT Root Complex 0x9600
 					device pci 0.1 off end # CLKCONFIG
-					device pci 2.0 on  end # GPP1 Port0  x16 SLOT4
+					device pci 2.0 on  end # GPP1 Port0 x16 SLOT4
 					device pci 3.0 off end # GPP1 Port1
-					device pci 4.0 on  end # GPP3a Port0  x4 SAS
+					device pci 4.0 on  end # GPP3a Port0 x4 SAS
 					device pci 5.0 off end # GPP3a Port1
 					device pci 6.0 off end # GPP3a Port2
 					device pci 7.0 off end # GPP3a Port3
 					device pci 8.0 off end # NB/SB Link P2P bridge, should be hidden at boot time
-					device pci 9.0 off end # GPP3a Port4  x1 NC
-					device pci a.0 off end # GPP3a Port5  x1 NC
-					device pci b.0 off end # GPP2 Port0 (Not for sr5650)
-					device pci c.0 off end # GPP2 Port1 (Not for sr5650/sr5670)
+					device pci 9.0 off end # GPP3a Port4
+					device pci a.0 off end # GPP3a Port5
+					device pci b.0 on  end # GPP2 Port0 x8 SLOT3
+					device pci c.0 on  end # GPP2 Port1 x8 SLOT1
 					device pci d.0 on  end # GPP3b Port0 (Not for sr5650/sr5670) 0x5A1E, Intel 82576
-					register "gpp1_configuration" = "0"   # Configuration 16:0 default
-					register "gpp2_configuration" = "1"   # Configuration 8:8
-					register "gpp3a_configuration" = "2"   # 2 Configuration 4:1:1:0:0:0, 11 Configuration 1:1:1:1:1:1
-					register "port_enable" = "0x2014" # 0b10000000010100
+					register "gpp1_configuration"  = "0" # Configuration 16:0 default
+					register "gpp2_configuration"  = "1" # Configuration 8:8
+					register "gpp3a_configuration" = "2" # 2 Configuration 4:1:1:0:0:0, 11 Configuration 1:1:1:1:1:1
+					register "port_enable" = "0x3814"    # 0b11100000010100
 				end #northbridge/amd/cimx/rd890
 				chip southbridge/amd/cimx/sb700 # it is under NB/SB Link, but on the same pci bus
 					device pci 11.0 on end # SATA
