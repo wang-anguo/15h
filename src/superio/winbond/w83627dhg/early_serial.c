@@ -37,6 +37,7 @@ void pnp_exit_ext_func_mode(pnp_devfn_t dev)
  * Select Pin 89, Pin 90 function as I2C interface SDA, SCL.
  *  {Pin 89, Pin 90} function can be selected as {GP33, GP32}, or
  *  {RSTOUT3#, RSTOUT2#} or {SDA, SCL}
+ *  See W83627DHG-P Data Sheet, Page 206
  */
 void w83627dhg_enable_i2c(pnp_devfn_t dev)
 {
