@@ -1655,20 +1655,20 @@ BOOLEAN MemFS3DefConstructorRet (
       #define TECH_TRAIN_DQS____DDR3 MemTFeatDef
       MEM_TECH_FEAT_BLOCK  memTechTrainingFeatSequenceDDR3Hy = {
         MEM_TECH_FEAT_BLOCK_STRUCT_VERSION,
-        TECH_TRAIN_ENTER_HW_TRN_DDR3,
-        TECH_TRAIN_SW_WL_DDR3,
-        TECH_TRAIN_HW_WL_P1_DDR3,
-        TECH_TRAIN_HW_DQS_REC_EN_P1_DDR3,
-        TECH_TRAIN_HW_WL_P2_DDR3,
-        TECH_TRAIN_HW_DQS_REC_EN_P2_DDR3,
-        TECH_TRAIN_EXIT_HW_TRN_DDR3,
-        TECH_TRAIN_NON_OPT_SW_DQS_REC_EN_P1_DDR3,
-        TECH_TRAIN_OPT_SW_DQS_REC_EN_P1_DDR3,
-        TECH_TRAIN_NON_OPT_SW_RD_WR_POS_DDR3,
-        TECH_TRAIN_OPT_SW_RD_WR_POS_DDR3,
-        TECH_TRAIN_MAX_RD_LAT_DDR3,
-        TECH_TRAIN_HW_DQS_REC_EN_SEED_DDR3,
-        TECH_TRAIN_DQS____DDR3
+        TECH_TRAIN_ENTER_HW_TRN_DDR3,			// MemTPreparePhyAssistedTraining
+        TECH_TRAIN_SW_WL_DDR3,				// MemTFeatDef
+        TECH_TRAIN_HW_WL_P1_DDR3,			// MemTWriteLevelizationHw3Pass1	// Write Levelization Training, Pass 1
+        TECH_TRAIN_HW_DQS_REC_EN_P1_DDR3,		// MemTFeatDef
+        TECH_TRAIN_HW_WL_P2_DDR3,			// MemTWriteLevelizationHw3Pass2	// Write Levelization Training, Pass 2
+        TECH_TRAIN_HW_DQS_REC_EN_P2_DDR3,		// MemTFeatDef
+        TECH_TRAIN_EXIT_HW_TRN_DDR3,			// MemTExitPhyAssistedTraining
+        TECH_TRAIN_NON_OPT_SW_DQS_REC_EN_P1_DDR3,	// MemTFeatDef
+        TECH_TRAIN_OPT_SW_DQS_REC_EN_P1_DDR3,		// MemTTrainOptRcvrEnSwPass1		// DQS Receiver Enable Training
+        TECH_TRAIN_NON_OPT_SW_RD_WR_POS_DDR3,		// MemTFeatDef
+        TECH_TRAIN_OPT_SW_RD_WR_POS_DDR3,		// MemTTrainDQSEdgeDetectSw 		// DQS Position Training (FAILS)
+        TECH_TRAIN_MAX_RD_LAT_DDR3,			// MemTTrainMaxLatency 			// MaxRdLatency Training
+        TECH_TRAIN_HW_DQS_REC_EN_SEED_DDR3,		// MemTTrainDQSEdgeDetect
+        TECH_TRAIN_DQS____DDR3				// MemTFeatDef
       };
       #define NB_TRAIN_FLOW_DDR3    MemNDQSTiming3Nb
       #define MEM_TECH_ENABLE_TRAINING_SEQUENCE_DDR3_HY {MEM_TECH_TRAIN_SEQUENCE_STRUCT_VERSION,memNSequenceDDR3Nb, memNEnableTrainSequenceHy, &memTechTrainingFeatSequenceDDR3Hy },
@@ -1985,20 +1985,20 @@ BOOLEAN MemFS3DefConstructorRet (
       #define TECH_TRAIN_DQS____DDR3 MemTFeatDef
       MEM_TECH_FEAT_BLOCK  memTechTrainingFeatSequenceDDR3OR = {
         MEM_TECH_FEAT_BLOCK_STRUCT_VERSION,
-        TECH_TRAIN_ENTER_HW_TRN_DDR3,
-        TECH_TRAIN_SW_WL_DDR3,
-        TECH_TRAIN_HW_WL_P1_DDR3,
-        TECH_TRAIN_HW_DQS_REC_EN_P1_DDR3,
-        TECH_TRAIN_HW_WL_P2_DDR3,
-        TECH_TRAIN_HW_DQS_REC_EN_P2_DDR3,
-        TECH_TRAIN_EXIT_HW_TRN_DDR3,
-        TECH_TRAIN_NON_OPT_SW_DQS_REC_EN_P1_DDR3,
-        TECH_TRAIN_OPT_SW_DQS_REC_EN_P1_DDR3,
-        TECH_TRAIN_NON_OPT_SW_RD_WR_POS_DDR3,
-        TECH_TRAIN_OPT_SW_RD_WR_POS_DDR3,
-        TECH_TRAIN_MAX_RD_LAT_DDR3,
-        TECH_TRAIN_HW_DQS_REC_EN_SEED_DDR3,
-        TECH_TRAIN_DQS____DDR3
+        TECH_TRAIN_ENTER_HW_TRN_DDR3,			// MemTPreparePhyAssistedTraining
+        TECH_TRAIN_SW_WL_DDR3,				// MemTFeatDef
+        TECH_TRAIN_HW_WL_P1_DDR3,			// MemTWriteLevelizationHw3Pass1
+        TECH_TRAIN_HW_DQS_REC_EN_P1_DDR3,		// MemTDqsTrainRcvrEnHwPass1
+        TECH_TRAIN_HW_WL_P2_DDR3,			// MemTWriteLevelizationHw3Pass2
+        TECH_TRAIN_HW_DQS_REC_EN_P2_DDR3,		// MemTDqsTrainRcvrEnHwPass2
+        TECH_TRAIN_EXIT_HW_TRN_DDR3,			// MemTExitPhyAssistedTraining
+        TECH_TRAIN_NON_OPT_SW_DQS_REC_EN_P1_DDR3,	// MemTFeatDef
+        TECH_TRAIN_OPT_SW_DQS_REC_EN_P1_DDR3,		// MemTFeatDef
+        TECH_TRAIN_NON_OPT_SW_RD_WR_POS_DDR3,		// MemTFeatDef
+        TECH_TRAIN_OPT_SW_RD_WR_POS_DDR3,		// MemTTrainDQSEdgeDetectSw
+        TECH_TRAIN_MAX_RD_LAT_DDR3,			// MemTTrainMaxLatency
+        TECH_TRAIN_HW_DQS_REC_EN_SEED_DDR3,		// MemTRdPosWithRxEnDlySeeds3
+        TECH_TRAIN_DQS____DDR3				// MemTFeatDef
       };
       #define NB_TRAIN_FLOW_DDR3    MemNDQSTiming3Nb
       #define MEM_TECH_ENABLE_TRAINING_SEQUENCE_DDR3_OR {MEM_TECH_TRAIN_SEQUENCE_STRUCT_VERSION,memNSequenceDDR3Nb, memNEnableTrainSequenceOr, &memTechTrainingFeatSequenceDDR3OR },
