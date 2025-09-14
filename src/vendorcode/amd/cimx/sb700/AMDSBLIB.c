@@ -223,9 +223,10 @@ UINT16 dwTableSize
                 if ( (pPciByteTable->bRegIndex==0xFF) && (pPciByteTable->bANDMask==0xFF) && (pPciByteTable->bORMask==0xFF) ){
                         pPciByteTable++;
                         dbBusNo = pPciByteTable->bRegIndex;
-                        dbDevFnNo = pPciByteTable->bANDMask;
-                }
-                else{
+			dbDevFnNo = pPciByteTable->bANDMask;
+			pPciByteTable++;
+			i++;
+                } else {
                         ddBDFR = (dbBusNo << 24) + (dbDevFnNo << 16) + (pPciByteTable->bRegIndex) ;
                         TRACE((DMSG_SB_TRACE, "PFA=%X  AND=%X, OR=%X\n", ddBDFR, pPciByteTable->bANDMask, pPciByteTable->bORMask));
                         RWPCI(ddBDFR, AccWidthUint8 | S3_SAVE, pPciByteTable->bANDMask, pPciByteTable->bORMask);
