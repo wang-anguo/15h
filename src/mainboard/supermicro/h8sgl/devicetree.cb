@@ -102,28 +102,28 @@ chip northbridge/amd/agesa/family15/root_complex
 						end #superio/winbond/w83627dhg
 						chip drivers/i2c/w83795
 							# Enable Digital Temperature Sensors
-							register "dtse" = "0x0f"			# DTS1-4 (Sockets 1-4)
+							register "dtse" = "0x01"			# DTS1
 							# Enable Voltage Sensors
-							register "volt_ctrl1" = "0x3F"			# VSEN1 - VSEN6
+							register "volt_ctrl1" = "0x01"			# VSEN1
 							register "volt_ctrl2" = "0x00"			# None
 							# Enable Temperature Sensors
 							register "temp_ctrl1" = "0x20"			# DTS
 							register "temp_ctrl2" = "0x00"			# None
 							# Enable Fan Sensors
-							register "fanin_ctrl1" = "0xFF"			# FANIN1 - FANIN8
-							register "fanin_ctrl2" = "0x01"			# FANIN9
+							register "fanin_ctrl1" = "0x3F"			# FANIN1 - FANIN6
+							register "fanin_ctrl2" = "0x00"			# None
 							# Select Temperature Sources for Fan Control
 							register "temp1_source_select" = "0x01"		# Temperature1 = DTS1 (Socket1)
-							register "temp2_source_select" = "0x01"		# Temperature2 = DTS2 (Socket2)
-							register "temp3_source_select" = "0x01"		# Temperature3 = DTS3 (Socket3)
-							register "temp4_source_select" = "0x01"		# Temperature4 = DTS4 (Socket4)
+							register "temp2_source_select" = "0x01"		# Temperature2 = DTS2 (not used)
+							register "temp3_source_select" = "0x01"		# Temperature3 = DTS3 (not used)
+							register "temp4_source_select" = "0x01"		# Temperature4 = DTS4 (not used)
 							register "temp5_source_select" = "0x00"		# Temperature5 = TR5 (not used)
 							register "temp6_source_select" = "0x00"		# Temperature6 = TR6 (not used)
 							# Assign Temperatures to Fan Zones
-							register "temp1_fan_select" = "0x01"		# Temperature1 controls Fan1
-							register "temp2_fan_select" = "0x01"		# Temperature2 controls Fan1
-							register "temp3_fan_select" = "0x01"		# Temperature3 controls Fan1
-							register "temp4_fan_select" = "0x01"		# Temperature4 controls Fan1
+							register "temp1_fan_select" = "0x01"		# Temperature1 controls Fan output 1 (all PWM fans)
+							register "temp2_fan_select" = "0x00"		# Temperature2 controls nothing
+							register "temp3_fan_select" = "0x00"		# Temperature3 controls nothing
+							register "temp4_fan_select" = "0x00"		# Temperature4 controls nothing
 							register "temp5_fan_select" = "0x00"		# Temperature5 controls nothing
 							register "temp6_fan_select" = "0x00"		# Temperature6 controls nothing
 							# Target Temperatures (C), ThermalCruise Mode
