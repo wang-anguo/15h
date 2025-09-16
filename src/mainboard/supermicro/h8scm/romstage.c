@@ -33,10 +33,6 @@
 #include <superio/winbond/common/winbond.h>
 #include <superio/winbond/w83627dhg/w83627dhg.h>
 
-
-#define SERIAL_DEV PNP_DEV(0x2e, W83627DHG_SP1)
-#define DUMMY_DEV PNP_DEV(0x2e, 0)
-
 void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 {
 	u32 val;
