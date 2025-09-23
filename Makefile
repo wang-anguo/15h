@@ -100,10 +100,12 @@ export CXX=g++12
 HOSTCC := gcc12
 HOSTCXX = g++12
 DATE = gdate
+CONVERT = magick
 else
 HOSTCC := $(if $(shell type gcc 2>/dev/null),gcc,cc)
 HOSTCXX = g++
 DATE = date
+CONVERT = convert
 endif
 HOSTCFLAGS := -g
 HOSTCXXFLAGS := -g

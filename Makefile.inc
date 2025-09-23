@@ -355,12 +355,12 @@ cbfs-files-processor-jpg420= \
         $(eval $(2): $(1) $(KCONFIG_AUTOCONFIG);                                \
                 printf "    CONVERT    $$<\n";                                  \
                 res=$(CONFIG_BOOTSPLASH_CONVERT_RESOLUTION);                    \
-                res=$$$$(magick $$<                                             \
+                res=$$$$($$(CONVERT) $$<                                        \
                         -colorspace RGB                                         \
                         $$(BOOTSPLASH_RESIZE-y)                                 \
                         -format '%wx%h' -write info:                            \
                         bmp:$$@);                                               \
-                magick $$@                                                      \
+                $$(CONVERT) $$@                                                 \
                         $$(BOOTSPLASH_ROUND16)                                  \
                         $$(BOOTSPLASH_COLORSWAP-y)                              \
                         $$(BOOTSPLASH_TEXT-y)                                   \
@@ -1322,8 +1322,8 @@ revision-file := $(obj)/build.h
 revision-type := raw
 
 ifeq ($(CONFIG_BOOTSPLASH_CONVERT),y)
-ifeq ($(shell command -v magick),)
-$(error CONFIG_BOOTSPLASH_CONVERT requires the magick program (part of ImageMagick))
+ifeq ($(shell command -v $(CONVERT)),)
+$(error CONFIG_BOOTSPLASH_CONVERT requires the $(CONVERT) program (part of ImageMagick))
 endif
 cbfs-files-$(CONFIG_BOOTSPLASH_IMAGE) += bootsplash.jpg
 bootsplash.jpg-file := $(call strip_quotes,$(CONFIG_BOOTSPLASH_FILE)):jpg420
