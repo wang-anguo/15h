@@ -95,8 +95,8 @@ endif
 .SUFFIXES:
 
 ifeq ($(UNAME),FreeBSD)
-CC = gcc12
-CXX = g++12
+export CC=gcc12
+export CXX=g++12
 HOSTCC := gcc12
 HOSTCXX = g++12
 DATE = gdate
