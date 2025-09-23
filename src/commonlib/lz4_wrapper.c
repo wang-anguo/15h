@@ -83,7 +83,7 @@ typedef uint32_t U32;
 typedef  int32_t S32;
 typedef uint64_t U64;
 
-#define FORCE_INLINE static __always_inline
+#define FORCE_INLINE static __always_inline inline
 #define likely(expr) __builtin_expect((expr) != 0, 1)
 #define unlikely(expr) __builtin_expect((expr) != 0, 0)
 

@@ -355,12 +355,12 @@ cbfs-files-processor-jpg420= \
         $(eval $(2): $(1) $(KCONFIG_AUTOCONFIG);                                \
                 printf "    CONVERT    $$<\n";                                  \
                 res=$(CONFIG_BOOTSPLASH_CONVERT_RESOLUTION);                    \
-                res=$$$$(convert $$<                                            \
+                res=$$$$(magick $$<                                             \
                         -colorspace RGB                                         \
                         $$(BOOTSPLASH_RESIZE-y)                                 \
                         -format '%wx%h' -write info:                            \
                         bmp:$$@);                                               \
-                convert $$@                                                     \
+                magick $$@                                                      \
                         $$(BOOTSPLASH_ROUND16)                                  \
                         $$(BOOTSPLASH_COLORSWAP-y)                              \
                         $$(BOOTSPLASH_TEXT-y)                                   \
@@ -370,7 +370,7 @@ cbfs-files-processor-jpg420= \
                         jpg:$$@)
 
 BOOTSPLASH_TEXT-CT-y =$(call strip_quotes,$(CONFIG_BOOTSPLASH_CONVERT_TEXT_DISTRIBUTION))
-BOOTSPLASH_TEXT-CT-$(CONFIG_BOOTSPLASH_CONVERT_TEXT_DISTRIBUTION_DATE) += $(shell git log -1 --format="%at" | xargs -I{} date -d @{} +%Y.%m.%d)
+BOOTSPLASH_TEXT-CT-$(CONFIG_BOOTSPLASH_CONVERT_TEXT_DISTRIBUTION_DATE) += $(shell git log -1 --format="%at" | xargs -I{} $(DATE) -d @{} +%Y.%m.%d)
 BOOTSPLASH_TEXT-CT-y +=$(call strip_quotes,$(CONFIG_BOOTSPLASH_CONVERT_TEXT_BRANCH))
 BOOTSPLASH_TEXT-CT-$(CONFIG_BOOTSPLASH_CONVERT_TEXT_BRANCH_COMMIT) :=$(BOOTSPLASH_TEXT-CT-y)-$(shell git rev-parse --short HEAD)
 BOOTSPLASH_TEXT-CT-$(CONFIG_BOOTSPLASH_CONVERT_TEXT_BRANCH_COMMIT) :=$(BOOTSPLASH_TEXT-CT-y)$(shell git diff --quiet || echo '-dirty')
@@ -1322,8 +1322,8 @@ revision-file := $(obj)/build.h
 revision-type := raw
 
 ifeq ($(CONFIG_BOOTSPLASH_CONVERT),y)
-ifeq ($(shell command -v convert),)
-$(error CONFIG_BOOTSPLASH_CONVERT requires the convert program (part of ImageMagick))
+ifeq ($(shell command -v magick),)
+$(error CONFIG_BOOTSPLASH_CONVERT requires the magick program (part of ImageMagick))
 endif
 cbfs-files-$(CONFIG_BOOTSPLASH_IMAGE) += bootsplash.jpg
 bootsplash.jpg-file := $(call strip_quotes,$(CONFIG_BOOTSPLASH_FILE)):jpg420

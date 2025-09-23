@@ -78,6 +78,7 @@ TOPLEVEL := .
 
 CONFIG_SHELL := sh
 KBUILD_DEFCONFIG := configs/defconfig
+UNAME := $(shell uname)
 UNAME_RELEASE := $(shell uname -r)
 HAVE_DOTCONFIG := $(wildcard $(DOTCONFIG))
 MAKEFLAGS += -rR --no-print-directory
@@ -93,8 +94,17 @@ endif
 # Disable implicit/built-in rules to make Makefile errors fail fast.
 .SUFFIXES:
 
+ifeq ($(UNAME),FreeBSD)
+CC = gcc12
+CXX = g++12
+HOSTCC := gcc12
+HOSTCXX = g++12
+DATE = gdate
+else
 HOSTCC := $(if $(shell type gcc 2>/dev/null),gcc,cc)
 HOSTCXX = g++
+DATE = date
+endif
 HOSTCFLAGS := -g
 HOSTCXXFLAGS := -g
 
