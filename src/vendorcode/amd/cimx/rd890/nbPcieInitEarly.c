@@ -693,7 +693,10 @@ PcieGetPortsLinkStatus (
         //Get link state
         LibNbPciIndexRead (Port.AddressValue | NB_BIF_INDEX, NB_BIFNBP_REGA5, AccessWidth32, &LinkState, pConfig);
         LinkState &= 0x3F;
-        CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_MISC), "    PortId %d LinkState = 0x%x \n", PortId, LinkState));
+	// Only List final states
+	if(Pooling == 0) {
+		CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_MISC), "    PortId %d LinkState = 0x%x \n", PortId, LinkState));
+	}
         //Check if link in L0 state
 
         if (LinkState == 0x10) {
