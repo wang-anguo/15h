@@ -32,6 +32,8 @@
 AGESA_STATUS AmdMemoryReadSPD (UINT32 unused1, UINTN unused2, AGESA_READ_SPD_PARAMS *info)
 {
 	UINT8 spdAddress;
+	int err;
+	int i;
 
 	DEVTREE_CONST struct device *dev = dev_find_slot(0, PCI_DEVFN(0x18, 2));
 	if (dev == NULL)
@@ -54,8 +56,16 @@ AGESA_STATUS AmdMemoryReadSPD (UINT32 unused1, UINTN unused2, AGESA_READ_SPD_PAR
 	if (spdAddress == 0)
 		return AGESA_ERROR;
 
-	int err = smbus_readSpd(spdAddress, (void *) info->Buffer, 256);
+	err = smbus_readSpd(spdAddress, (void *) info->Buffer, 256);
 	if (err)
 		return AGESA_ERROR;
+
+	printk(BIOS_DEBUG, "AmdMemoryReadSPD, Socket %d, Channel %d, Dimm %d, SpdAddr %02Xh\n", info->SocketId, info->MemChannelId, info->DimmId, spdAddress);
+	printk(BIOS_DEBUG, "SPD Hex dump:\n");
+	for(i = 0; i < 256; i++) {
+		printk(BIOS_DEBUG, " %02X", (uint8_t)(info->Buffer[i]));
+		if((i+1) % 64 == 0) printk(BIOS_DEBUG, "\n");
+	}
+	printk(BIOS_DEBUG, "\n\n");
 	return AGESA_SUCCESS;
 }
