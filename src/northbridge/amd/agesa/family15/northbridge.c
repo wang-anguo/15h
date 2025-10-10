@@ -490,8 +490,14 @@ static unsigned long acpi_fill_hest(acpi_hest_t *hest)
 
 static void northbridge_fill_ssdt_generator(struct device *device)
 {
+	u32 nodeid;
 	msr_t msr;
 	char pscope[] = "\\_SB.PCI0";
+
+	nodeid = amdfam15_nodeid(device);
+	if(nodeid) return; // Output once, for node0
+
+	printk(BIOS_DEBUG, "northbridge_fill_ssdt_generator: node %d\n", nodeid);
 
 	acpigen_write_scope(pscope);
 	msr = rdmsr(TOP_MEM);
