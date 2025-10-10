@@ -1,0 +1,2 @@
+config BOARD_ASUS_RAPTOR_KGPE_D16
+	bool "Raptor KGPE-D16"

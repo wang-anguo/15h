@@ -1,8 +1,8 @@
-if BOARD_ASUS_KGPE_D16
+if BOARD_ASUS_RAPTOR_KCMA_D8
 
 config BOARD_SPECIFIC_OPTIONS
 	def_bool y
-	select CPU_AMD_SOCKET_G34_NON_AGESA
+	select CPU_AMD_SOCKET_C32_NON_AGESA
 	select DIMM_DDR3
 	select DIMM_REGISTERED
 	# select QRANK_DIMM_SUPPORT
@@ -27,20 +27,18 @@ config BOARD_SPECIFIC_OPTIONS
 	select BOARD_ROMSIZE_KB_2048
 	select ENABLE_APIC_EXT_ID
 	select SPI_FLASH
-	select MAINBOARD_HAS_LPC_TPM
 	select DRIVERS_I2C_W83795
 	select DRIVERS_ASPEED_AST2050
 	select MAINBOARD_FORCE_NATIVE_VGA_INIT
 	select POWER_STATE_DEFAULT_ON_AFTER_FAILURE
-	select IPMI_KCS
 
 config MAINBOARD_DIR
 	string
-	default "asus/kgpe-d16"
+	default "asus/raptor_kcma-d8"
 
 config BOOTBLOCK_MAINBOARD_INIT
 	string
-	default "mainboard/asus/kgpe-d16/bootblock.c"
+	default "mainboard/asus/raptor_kcma-d8/bootblock.c"
 
 config DCACHE_RAM_BASE
 	hex
@@ -56,7 +54,7 @@ config APIC_ID_OFFSET
 
 config MAINBOARD_PART_NUMBER
 	string
-	default "KGPE-D16"
+	default "KCMA-D8"
 
 config HW_MEM_HOLE_SIZEK
 	hex
@@ -64,12 +62,12 @@ config HW_MEM_HOLE_SIZEK
 
 config MAX_CPUS
 	int
-	default 32
+	default 16
 
-# 2 (internal) processors per G34 socket
+# 1 (internal) processor per C32 socket
 config MAX_PHYSICAL_CPUS
 	int
-	default 4
+	default 2
 
 config HT_CHAIN_UNITID_BASE
 	hex
@@ -91,16 +89,8 @@ config ONBOARD_VGA_IS_PRIMARY
 	bool
 	default y
 
-config VGA_BIOS_ID
-	string
-	default "1a03,2000"
-
-config VGA_BIOS_FILE
-	string
-	default "3rdparty/blobs/mainboard/asus/kgpe-d16/VGABIOS.bin"
-
 config MAX_REBOOT_CNT
 	int
 	default 10
 
-endif # BOARD_ASUS_KGPE_D16
+endif # BOARD_ASUS_RAPTOR_KCMA_D8
