@@ -67,6 +67,11 @@
 
 /*f15 Rev A1 ucode patch CpuF15OrMicrocodePatch0600011F */
 #define BLDOPT_REMOVE_EARLY_SAMPLES		FALSE
+#if CONFIG(REMOVE_MICROCODE)
+#define BLDOPT_REMOVE_MICROCODE_UPDATES          TRUE
+#else
+#define BLDOPT_REMOVE_MICROCODE_UPDATES          FALSE
+#endif
 
 //#define BLDOPT_REMOVE_HT_ASSIST                TRUE
 //#define BLDOPT_REMOVE_MSG_BASED_C1E            TRUE

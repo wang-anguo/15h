@@ -1027,6 +1027,7 @@ VOLATILE  AMD_MODULE_HEADER mCpuModuleID = {
 #define OPTION_WHEA                     TRUE
 #define OPTION_DMI                      TRUE
 #define OPTION_EARLY_SAMPLES            FALSE
+#define OPTION_MICROCODE_UPDATES        TRUE
 #define CFG_ACPI_PSTATES_PPC            TRUE
 #define CFG_ACPI_PSTATES_PCT            TRUE
 #define CFG_ACPI_PSTATES_PSD            TRUE
@@ -1887,6 +1888,16 @@ CONST UINT32 ROMDATA AmdPlatformTypeCgf = CFG_AMD_PLATFORM_TYPE;
   #else
     #undef  OPTION_EARLY_SAMPLES
     #define OPTION_EARLY_SAMPLES        TRUE
+  #endif
+#endif
+
+#ifdef BLDOPT_REMOVE_MICROCODE_UPDATES
+  #if  BLDOPT_REMOVE_MICROCODE_UPDATES == TRUE
+    #undef  OPTION_MICROCODE_UPDATES
+    #define OPTION_MICROCODE_UPDATES    FALSE
+  #else
+    #undef  OPTION_MICROCODE_UPDATES
+    #define OPTION_MICROCODE_UPDATES    TRUE
   #endif
 #endif
 

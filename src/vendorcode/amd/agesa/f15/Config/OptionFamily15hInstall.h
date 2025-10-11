@@ -325,12 +325,12 @@ extern F_IS_NB_PSTATE_ENABLED F15IsNbPstateEnabled;
       #if GET_PATCHES == TRUE
         GetF15OrMicroCodePatchesStruct,
       #else
-        (PF_CPU_GET_FAMILY_SPECIFIC_ARRAY) CommonAssert,
+        (PF_CPU_GET_FAMILY_SPECIFIC_ARRAY) CommonVoid,
       #endif
       #if GET_PATCHES_EQUIVALENCE_TABLE == TRUE
         GetF15OrMicrocodeEquivalenceTable,
       #else
-        (PF_CPU_GET_FAMILY_SPECIFIC_ARRAY) CommonAssert,
+        (PF_CPU_GET_FAMILY_SPECIFIC_ARRAY) CommonVoid,
       #endif
       #if GET_CACHE_INFO == TRUE
         GetF15CacheInfo,

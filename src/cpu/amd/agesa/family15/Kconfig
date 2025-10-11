@@ -55,4 +55,8 @@ config REDIRECT_IDS_HDT_CONSOLE_TO_SERIAL
 
 	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
 
+config REMOVE_MICROCODE
+	bool "Remove Microcode Updates"
+	default n
+
 endif #CPU_AMD_AGESA_FAMILY15

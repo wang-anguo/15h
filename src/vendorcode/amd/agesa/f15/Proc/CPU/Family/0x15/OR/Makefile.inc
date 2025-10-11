@@ -1,19 +1,21 @@
 libagesa-y += F15OrC6State.c
 libagesa-y += F15OrCpb.c
 libagesa-y += F15OrEarlySamples.c
-libagesa-y += F15OrEquivalenceTable.c
 libagesa-y += F15OrHtPhyTables.c
 libagesa-y += F15OrInitEarlyTable.c
 libagesa-y += F15OrIoCstate.c
 libagesa-y += F15OrL3Features.c
 libagesa-y += F15OrLogicalIdTables.c
 libagesa-y += F15OrLowPwrPstate.c
+ifneq ($(CONFIG_REMOVE_MICROCODE),y)
+libagesa-y += F15OrEquivalenceTable.c
 libagesa-y += F15OrMicrocodePatch06000425.c
 libagesa-y += F15OrMicrocodePatch0600050D_Enc.c
 libagesa-y += F15OrMicrocodePatch06000624_Enc.c
 libagesa-y += F15OrMicrocodePatch0600063E_Enc.c
 libagesa-y += F15OrMicrocodePatch06000852_Enc.c
 libagesa-y += F15OrMicrocodePatchTables.c
+endif
 libagesa-y += F15OrMsgBasedC1e.c
 libagesa-y += F15OrMsrTables.c
 libagesa-y += F15OrMultiLinkPciTables.c

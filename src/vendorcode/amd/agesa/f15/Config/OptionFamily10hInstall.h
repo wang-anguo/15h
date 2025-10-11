@@ -278,12 +278,12 @@ extern F_GET_EARLY_INIT_TABLE GetF10EarlyInitOnCoreTable;
       #if GET_PATCHES == TRUE
         GetF10BlMicroCodePatchesStruct,
       #else
-        (PF_CPU_GET_FAMILY_SPECIFIC_ARRAY) CommonAssert,
+        (PF_CPU_GET_FAMILY_SPECIFIC_ARRAY) CommonVoid,
       #endif
       #if GET_PATCHES_EQUIVALENCE_TABLE == TRUE
         GetF10BlMicrocodeEquivalenceTable,
       #else
-        (PF_CPU_GET_FAMILY_SPECIFIC_ARRAY) CommonAssert,
+        (PF_CPU_GET_FAMILY_SPECIFIC_ARRAY) CommonVoid,
       #endif
       #if GET_CACHE_INFO == TRUE
         GetF10CacheInfo,
