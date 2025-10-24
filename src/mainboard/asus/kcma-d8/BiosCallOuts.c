@@ -17,6 +17,7 @@
 #include <vendorcode/amd/cimx/sb700/OEM.h>
 #include <northbridge/amd/agesa/BiosCallOuts.h>
 #include <device/pci_ops.h>
+#include <spd_bin.h>
 
 #ifdef __PRE_RAM__
 /* These defines are used to select the appropriate socket for the SPD read
@@ -61,18 +62,16 @@ static AGESA_STATUS read_spd_buffer(UINT32 unused1, UINTN unused2, AGESA_READ_SP
 		case 0x0301: spdAddress = 0x57; break;
 		default: spdAddress = 0x00;
 	}
-	printk(BIOS_DEBUG, "read_spd_buffer: SPD Addr 0x%02X\n", spdAddress);
+	printk(BIOS_DEBUG, "SPD: Address 0x%02X\n", spdAddress);
 	if(!spdAddress) return AGESA_ERROR;
 
 	for(i = 0; i <= 0xFF; i++) {
 		data = do_smbus_read_byte(SMBUS1_BASE_ADDRESS, spdAddress, i);
 		if(data < 0) return AGESA_ERROR;
 		info->Buffer[i] = data;
-
-		printk(BIOS_DEBUG, " %02X", info->Buffer[i]);
-		if((i+1) % 32 == 0) printk(BIOS_DEBUG, "\n");
 	}
-	printk(BIOS_DEBUG, "\n\n");
+	print_spd_info(info->Buffer);
+	printk(BIOS_INFO, "\n");
 
 	return AGESA_SUCCESS;
 }
