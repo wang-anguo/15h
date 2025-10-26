@@ -4,7 +4,7 @@ config BOARD_SPECIFIC_OPTIONS
 	def_bool y
 	select AGESA_LEGACY
 	select CPU_AMD_AGESA_FAMILY15
-	select CPU_AMD_SOCKET_G34
+	select CPU_AMD_SOCKET_C32
 	select NORTHBRIDGE_AMD_AGESA_FAMILY15
 	select NORTHBRIDGE_AMD_CIMX_RD890
 	select SOUTHBRIDGE_AMD_CIMX_SB700
@@ -36,7 +36,7 @@ config HW_MEM_HOLE_SIZEK
 
 config MAX_CPUS
 	int
-	default 32
+	default 16
 
 config IRQ_SLOT_COUNT
 	int
@@ -56,6 +56,6 @@ config VGA_BIOS_ID
 
 config VGA_BIOS_FILE
 	string
-	default "3rdparty/blobs/mainboard/asus/kcma-d8/VGABIOS.bin"
+	default "3rdparty/blobs/mainboard/asus/kgpe-d16/VGABIOS.bin"
 
 endif # BOARD_ASUS_KCMA_D8

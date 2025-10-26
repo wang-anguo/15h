@@ -17,7 +17,7 @@
 
 #include "AGESA.h"
 #include "AdvancedApi.h"
-//#define OPTION_HW_DQS_REC_EN_TRAINING TRUE
+
 /* AGESA will check the OEM configuration during preprocessing stage,
  * coreboot enable -Wundef option, so we should make sure we have all contanstand defined
  */
@@ -32,7 +32,7 @@
 #define DDR1866_FREQUENCY		933	///< DDR 1866
 #define UNSUPPORTED_DDR_FREQUENCY	934	///< Highest limit of DDR frequency
 
-/* QUANDRANK_TYPE */
+/* QUANDRANK_TYPE*/
 #define QUADRANK_REGISTERED		0	///< Quadrank registered DIMM
 #define QUADRANK_UNBUFFERED		1	///< Quadrank unbuffered DIMM
 
@@ -57,11 +57,11 @@
 //#define BLDOPT_REMOVE_NODE_INTERLEAVE          TRUE
 //#define BLDOPT_REMOVE_PARALLEL_TRAINING        TRUE
 //#define BLDOPT_REMOVE_ONLINE_SPARE_SUPPORT     TRUE
-#define BLDOPT_REMOVE_MEM_RESTORE_SUPPORT      TRUE
+#define BLDOPT_REMOVE_MEM_RESTORE_SUPPORT        TRUE
 //#define BLDOPT_REMOVE_MULTISOCKET_SUPPORT      TRUE
-//#define BLDOPT_REMOVE_ACPI_PSTATES             TRUE
-//#define BLDOPT_REMOVE_SRAT                     TRUE
-//#define BLDOPT_REMOVE_SLIT                     TRUE
+////#define BLDOPT_REMOVE_ACPI_PSTATES             TRUE
+////#define BLDOPT_REMOVE_SRAT                     TRUE
+////#define BLDOPT_REMOVE_SLIT                     TRUE
 //#define BLDOPT_REMOVE_WHEA                     TRUE
 //#define BLDOPT_REMOVE_DMI                      TRUE
 
@@ -93,7 +93,7 @@
 
 #define BLDCFG_AMD_PLATFORM_TYPE                  AMD_PLATFORM_SERVER
 
-#define BLDCFG_MEMORY_BUS_FREQUENCY_LIMIT         DDR1600_FREQUENCY
+#define BLDCFG_MEMORY_BUS_FREQUENCY_LIMIT         DDR1866_FREQUENCY
 #define BLDCFG_MEMORY_MODE_UNGANGED               TRUE
 #define BLDCFG_MEMORY_QUAD_RANK_CAPABLE           TRUE
 #define BLDCFG_MEMORY_QUADRANK_TYPE               QUADRANK_REGISTERED
@@ -109,11 +109,11 @@
 #define BLDCFG_ONLINE_SPARE                       FALSE
 #define BLDCFG_BANK_SWIZZLE                       TRUE
 #define BLDCFG_TIMING_MODE_SELECT                 TIMING_MODE_AUTO
-#define BLDCFG_MEMORY_CLOCK_SELECT                DDR1600_FREQUENCY
+#define BLDCFG_MEMORY_CLOCK_SELECT                DDR1866_FREQUENCY
 #define BLDCFG_DQS_TRAINING_CONTROL               TRUE
 #define BLDCFG_IGNORE_SPD_CHECKSUM                FALSE
 #define BLDCFG_USE_BURST_MODE                     FALSE
-#define BLDCFG_MEMORY_ALL_CLOCKS_ON               TRUE
+#define BLDCFG_MEMORY_ALL_CLOCKS_ON               FALSE
 #define BLDCFG_ENABLE_ECC_FEATURE                 TRUE
 #define BLDCFG_ECC_REDIRECTION                    FALSE
 #define BLDCFG_SCRUB_IC_RATE                      0
@@ -301,6 +301,13 @@ CONST CPU_HT_DEEMPHASIS_LEVEL ROMDATA kcma_d8_deemphasis_list[] =
 	{0, 2, HT_FREQUENCY_2400M, HT_FREQUENCY_2400M, DeemphasisLevelMinus8, DcvLevelMinus7},
 	{0, 2, HT_FREQUENCY_2600M, HT_FREQUENCY_2600M, DeemphasisLevelMinus11pre8, DcvLevelMinus9},
 
+	{1, 0, HT3_FREQUENCY_MIN, HT_FREQUENCY_1600M, DeemphasisLevelNone, DcvLevelNone},
+	{1, 0, HT_FREQUENCY_1800M, HT_FREQUENCY_1800M, DeemphasisLevelMinus3, DcvLevelMinus5},
+	{1, 0, HT_FREQUENCY_2000M, HT_FREQUENCY_2000M, DeemphasisLevelMinus6, DcvLevelMinus5},
+	{1, 0, HT_FREQUENCY_2200M, HT_FREQUENCY_2200M, DeemphasisLevelMinus6, DcvLevelMinus7},
+	{1, 0, HT_FREQUENCY_2400M, HT_FREQUENCY_2400M, DeemphasisLevelMinus8, DcvLevelMinus7},
+	{1, 0, HT_FREQUENCY_2600M, HT_FREQUENCY_2600M, DeemphasisLevelMinus11pre8, DcvLevelMinus9},
+
 	/* Coherent link deemphasis. */
 	{HT_LIST_MATCH_ANY, HT_LIST_MATCH_ANY, HT3_FREQUENCY_MIN, HT_FREQUENCY_1600M, DeemphasisLevelNone, DcvLevelNone},
 	{HT_LIST_MATCH_ANY, HT_LIST_MATCH_ANY, HT_FREQUENCY_1800M, HT_FREQUENCY_1800M, DeemphasisLevelMinus3, DcvLevelMinus3},
@@ -336,6 +343,7 @@ CONST AP_MTRR_SETTINGS ROMDATA kcma_d8_ap_mtrr_list[] =
 #define BLDCFG_HTCHAIN_LIMITS_LIST		&kcma_d8_io_limit_list
 #define BLDCFG_PLATFORM_DEEMPHASIS_LIST		&kcma_d8_deemphasis_list
 #define BLDCFG_AP_MTRR_SETTINGS_LIST		&kcma_d8_ap_mtrr_list
+
 
 /*  Process the options...
  * This file include MUST occur AFTER the user option selection settings
