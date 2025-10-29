@@ -13,15 +13,16 @@
 ## GNU General Public License for more details.
 ##
 
-TAG-$(CONFIG_MEMTEST_MASTER)=origin/master
+TAG-$(CONFIG_MEMTEST_MASTER)=origin/main
 NAME-$(CONFIG_MEMTEST_MASTER)=Master
-TAG-$(CONFIG_MEMTEST_STABLE)=0bd34c22604660e4283316331f3e7bf8a3863753
+TAG-$(CONFIG_MEMTEST_STABLE)=f3846947bd8ff5a998cf0970b51727815cb11249
 NAME-$(CONFIG_MEMTEST_STABLE)=Stable
 TAG-$(CONFIG_MEMTEST_REVISION)=$(CONFIG_MEMTEST_REVISION_ID)
 
 project_name=Memtest86+
 project_dir=$(CURDIR)/memtest86plus
-project_git_repo=https://review.coreboot.org/memtest86plus.git
+project_make_dir=$(project_dir)/build32
+project_git_repo=https://git.15h.org/mrothfuss/memtest86plus.git
 
 all: build
 
@@ -39,23 +40,23 @@ endif
 	false
 endif
 	-cd $(project_dir); git show $(TAG-y) >/dev/null 2>&1 ; \
-		if [ $$? -ne 0 ] || [ "$(TAG-y)" = "origin/master" ]; then \
+		if [ $$? -ne 0 ] || [ "$(TAG-y)" = "origin/main" ]; then \
 		echo "    Fetching new commits from the $(project_name) git repo"; \
 		git fetch; fi
 
 checkout: fetch
 	echo "    Checking out $(project_name) revision $(NAME-y) ($(TAG-y))"
 	cd $(project_dir); \
-		git checkout master; \
+		git checkout main; \
 		git branch -D coreboot 2>/dev/null; \
 		git checkout -b coreboot $(TAG-y)
 
 build: checkout
 	echo "    MAKE       $(project_name) $(NAME-y)"
-	$(MAKE) -C $(project_dir) all
+	$(MAKE) -C $(project_make_dir) memtest.bin floppy.img
 
 clean:
-	test -d $(project_dir) && $(MAKE) -C $(project_dir) clean || exit 0
+	test -d $(project_make_dir) && $(MAKE) -C $(project_make_dir) clean || exit 0
 
 distclean:
 	rm -rf $(project_dir)

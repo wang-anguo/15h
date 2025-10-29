@@ -32,6 +32,10 @@ config MEMTEST_REVISION
 
 endchoice
 
+config MEMTEST_FLOPPY
+	bool "Add Memtest86+ as a SeaBIOS Floppy image"
+	default y
+
 config MEMTEST_REVISION_ID
 	string "Insert a commit's SHA-1 or a branch name"
 	depends on MEMTEST_REVISION
