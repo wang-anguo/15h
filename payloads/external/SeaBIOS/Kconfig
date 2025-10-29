@@ -4,10 +4,10 @@ choice
         prompt "SeaBIOS repository"
         default SEABIOS_GIT_UPSTREAM
 
-config SEABIOS_GIT_OFFICIAL
-        bool "Official"
+config SEABIOS_GIT_STANDARD
+        bool "Standard"
         help
-          Official SeaBIOS Repository
+          Standard SeaBIOS Repository
 config SEABIOS_GIT_CUSTOM
         bool "Custom"
         help
