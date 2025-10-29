@@ -6,7 +6,7 @@ choice
 	depends on MEMTEST_SECONDARY_PAYLOAD
 
 config MEMTEST_STABLE
-	bool "Stable"
+	bool "v7.20"
 	help
 	  Stable Memtest86+ version.
 
@@ -34,6 +34,7 @@ endchoice
 
 config MEMTEST_FLOPPY
 	bool "Add Memtest86+ as a SeaBIOS Floppy image"
+	depends on PAYLOAD_SEABIOS
 	default y
 
 config MEMTEST_REVISION_ID
