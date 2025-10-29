@@ -2,7 +2,7 @@ if PAYLOAD_SEABIOS
 
 choice
         prompt "SeaBIOS repository"
-        default SEABIOS_GIT_UPSTREAM
+        default SEABIOS_GIT_STANDARD
 
 config SEABIOS_GIT_STANDARD
         bool "Standard"
