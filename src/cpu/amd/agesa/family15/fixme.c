@@ -14,6 +14,7 @@
  */
 
 #include <cpu/x86/mtrr.h>
+#include <cpu/amd/msr.h>
 #include <northbridge/amd/agesa/agesa_helper.h>
 #include <AGESA.h>
 #include "amdlib.h"
@@ -59,6 +60,8 @@ void amd_initcpuio(void)
 	UINT32			i;
 	UINT32			TOM;
 
+	printk(BIOS_DEBUG, "%s: Enter\n", __func__);
+
 	/* get the number of coherent nodes in the system */
 	PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB, FUNC_0, 0x60);
 	LibAmdPciRead(AccessWidth32, PciAddress, &PciData, &StdHeader);
@@ -93,22 +96,22 @@ void amd_initcpuio(void)
 		}
 
 		/* Set VGA Ram MMIO 0000A0000-0000BFFFF to Node0 sbLink */
-		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0x84);
+		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0x84); //  MMIO Limit Low, Range 0
 		PciData = 0x00000B00;
 		PciData |= sblink << 4;
 		LibAmdPciWrite(AccessWidth32, PciAddress, &PciData, &StdHeader);
-		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0x80);
+		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0x80); //  MMIO Base Low, Range 0
 		PciData = 0x00000A03;
 		LibAmdPciWrite(AccessWidth32, PciAddress, &PciData, &StdHeader);
 
 		/* Set TOM1-FFFFFFFF to Node0 sbLink. */
-		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0x8C);
+		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0x8C); //  MMIO Limit Low, Range 1
 		PciData = 0x00FFFF00;
 		PciData |= sblink << 4;
 		LibAmdPciWrite(AccessWidth32, PciAddress, &PciData, &StdHeader);
 		TOM = (UINT32)MsrRead(TOP_MEM);
 		PciData = (TOM >> 8) | 0x03;
-		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0x88);
+		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0x88); //  MMIO Base Low, Range 1
 		LibAmdPciWrite(AccessWidth32, PciAddress, &PciData, &StdHeader);
 
 		/* Set MMCONF space to Node0 sbLink with NP set.
@@ -136,6 +139,8 @@ void amd_initcpuio(void)
 		PciData = 0x00000033;
 		LibAmdPciWrite(AccessWidth32, PciAddress, &PciData, &StdHeader);
 	}
+
+	printk(BIOS_DEBUG, "%s: Exit\n", __func__);
 }
 #else
 
@@ -268,7 +273,7 @@ void amd_initmmio(void)
 	 * MMIO configuration base Address MSR register.
 	 */
 	MsrReg = CONFIG_MMCONF_BASE_ADDRESS | (LibAmdBitScanReverse(CONFIG_MMCONF_BUS_NUMBER) << 2) | 1;
-	LibAmdMsrWrite(0xC0010058, &MsrReg, &StdHeader);
+	LibAmdMsrWrite(MMIO_CONF_BASE, &MsrReg, &StdHeader);
 
 #if CONFIG(BOARD_AMD_DINAR)
 	UINT32 PciData;
