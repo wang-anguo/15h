@@ -195,13 +195,12 @@ static const struct pci_driver pci_driver __pci_driver = {
 	.device = PCI_DEVICE_ID_ATI_SB700_PCI,
 };
 
-
 static void sb700_enable(struct device *dev)
 {
 	struct southbridge_amd_cimx_sb700_config *sb_chip =
 		(struct southbridge_amd_cimx_sb700_config *)(dev->chip_info);
 
-	printk(BIOS_DEBUG, "sb700_enable() ");
+	printk(BIOS_DEBUG, "%s\n", __func__);
 	switch (dev->path.pci.devfn) {
 		case (0x11 << 3) | 0: /* 0:11.0  SATA */
 			sb700_cimx_config(sb_config);
@@ -259,8 +258,17 @@ static void sb700_enable(struct device *dev)
 			break;
 
 		case (0x14 << 3) | 5: /* 0:14:5 OHCI-USB4 */
-			/* call CIMX entry after last device enable */
-			sb_Before_Pci_Init();
+			//sb_config->StdHeader.Func = SB_BEFORE_PCI_INIT;
+			//AmdSbDispatcher(sb_config);
+			sbBeforePciInit(sb_config);
+
+			//sb_config->StdHeader.Func = SB_AFTER_PCI_INIT;
+			//AmdSbDispatcher(sb_config);
+			sbAfterPciInit(sb_config);
+
+			//sb_config->StdHeader.Func = SB_LATE_POST_INIT;
+			//AmdSbDispatcher(sb_config);
+			sbLatePost(sb_config);
 			break;
 
 		default:
@@ -272,36 +280,3 @@ struct chip_operations southbridge_amd_cimx_sb700_ops = {
 	CHIP_NAME("ATI SB700")
 	.enable_dev = sb700_enable,
 };
-
-/**
- * @brief SB Cimx entry point sbBeforePciInit wrapper
- */
-void sb_Before_Pci_Init(void)
-{
-	printk(BIOS_SPEW, "sb700 %s Start\n", __func__);
-	/* TODO: The sb700 cimx dispatcher not work yet, calling cimx API directly */
-	//sb_config->StdHeader.Func = SB_BEFORE_PCI_INIT;
-	//AmdSbDispatcher(sb_config);
-	sbBeforePciInit(sb_config);
-	printk(BIOS_SPEW, "sb700 %s End\n", __func__);
-}
-
-void sb_After_Pci_Init(void)
-{
-	printk(BIOS_SPEW, "sb700 %s Start\n", __func__);
-	/* TODO: The sb700 cimx dispatcher not work yet, calling cimx API directly */
-	//sb_config->StdHeader.Func = SB_AFTER_PCI_INIT;
-	//AmdSbDispatcher(sb_config);
-	sbAfterPciInit(sb_config);
-	printk(BIOS_SPEW, "sb700 %s End\n", __func__);
-}
-
-void sb_Late_Post(void)
-{
-	printk(BIOS_SPEW, "sb700 %s Start\n", __func__);
-	/* TODO: The sb700 cimx dispatcher not work yet, calling cimx API directly */
-	//sb_config->StdHeader.Func = SB_LATE_POST_INIT;
-	//AmdSbDispatcher(sb_config);
-	sbLatePost(sb_config);
-	printk(BIOS_SPEW, "sb700 %s End\n", __func__);
-}

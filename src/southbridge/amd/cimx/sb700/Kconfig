@@ -51,6 +51,10 @@ config EHCI_BAR
 	hex
 	default 0xfef00000
 
+config HPET_MIN_TICKS
+	hex
+	default 0x37EE
+
 config BOOTBLOCK_SOUTHBRIDGE_INIT
 	string
 	default "southbridge/amd/cimx/sb700/bootblock.c"

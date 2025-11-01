@@ -56,7 +56,7 @@ void* ACPI_LocateTable(
 	DESCRIPTION_HEADER *CurrentTable;
 	do{
 //		if (*RsdPtr == ' DSR' && *(RsdPtr+1) == ' RTP'){
-		if ((*RsdPtr == Int32FromChar ('R', 'S', 'D', ' ')) && (*(RsdPtr+1) == Int32FromChar ('R', 'T', 'P', ' '))){
+		if ((*RsdPtr == Int32FromChar ('R', 'S', 'D', ' ')) && (*(RsdPtr+1) == Int32FromChar ('P', 'T', 'R', ' '))){
 			Rsdt = (UINT32 *)(uintptr_t)((RSDP_AGESA *)RsdPtr)->RsdtAddress;
 			break;
 		}

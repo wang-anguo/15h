@@ -523,10 +523,10 @@ hpetInit (AMDSBCFG* pConfig, BUILDPARAM *pStaticOptions)
   else {
     if (!(pConfig->S3Resume)) {
 //      pHpetTable = (DESCRIPTION_HEADER*)ACPI_LocateTable('TEPH');
-      pHpetTable = (DESCRIPTION_HEADER*)ACPI_LocateTable(Int32FromChar ('T', 'E', 'P', 'H'));
+      pHpetTable = (DESCRIPTION_HEADER*)ACPI_LocateTable(Int32FromChar ('H', 'P', 'E', 'T'));
       if (pHpetTable != NULL) {
 //        pHpetTable->Signature = 'HPET';
-        pHpetTable->Signature = Int32FromChar ('T', 'E', 'P', 'H');
+        pHpetTable->Signature = Int32FromChar ('H', 'P', 'E', 'T');
       }
     }
   }
