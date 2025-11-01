@@ -141,8 +141,6 @@ static u32 rd890_callout_entry(u32 func, uintptr_t data, void *config)
 			break;
 		case PHCB_AmdAllocateBuffer:
 			// TODO: required by src/vendorcode/amd/cimx/rd890/nbIommu.c
-			// reference: src/vendorcode/amd/agesa/f15tn/Proc/GNB/Modules/GnbIommuIvrs/GnbIommuIvrs.c
-			// here the heap manager allocates the buffer
 			break;
 		case PHCB_AmdUpdateApicInterruptMapping:
 			// TODO: called by src/vendorcode/amd/cimx/rd890/nbIoApic.c
@@ -176,21 +174,6 @@ static u32 rd890_callout_entry(u32 func, uintptr_t data, void *config)
 
 		case CB_AmdSetMidPostConfig:
 			nbConfigPtr->pNbConfig->IoApicBaseAddress = IO_APIC_ADDR;
-#ifndef IOMMU_SUPPORT_DISABLE //TODO enable iommu
-			/* SBIOS must alloc 16K memory for IOMMU MMIO */
-			/*
-			UINT32  MmcfgBarAddress; //using default IOmmuBaseAddress
-			LibNbPciRead(nbConfigPtr->NbPciAddress.AddressValue | 0x1C,
-					AccessWidth32,
-					&MmcfgBarAddress,
-					nbConfigPtr);
-			MmcfgBarAddress &= ~0xf;
-			if (MmcfgBarAddress != 0) {
-				nbConfigPtr->IommuBaseAddress = MmcfgBarAddress;
-			}
-			*/
-			nbConfigPtr->pNbConfig->IommuBaseAddress = 0xFDF00000; // TODO: define this, must match in src/northbridge/amd/agesa/family15/northbridge.c
-#endif
 			break;
 
 		case CB_AmdSetLatePostConfig:

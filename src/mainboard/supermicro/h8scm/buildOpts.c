@@ -113,7 +113,7 @@
 #define BLDCFG_DQS_TRAINING_CONTROL               TRUE
 #define BLDCFG_IGNORE_SPD_CHECKSUM                FALSE
 #define BLDCFG_USE_BURST_MODE                     FALSE
-#define BLDCFG_MEMORY_ALL_CLOCKS_ON               TRUE
+#define BLDCFG_MEMORY_ALL_CLOCKS_ON               FALSE
 #define BLDCFG_ENABLE_ECC_FEATURE                 TRUE
 #define BLDCFG_ECC_REDIRECTION                    FALSE
 #define BLDCFG_SCRUB_IC_RATE                      0
@@ -141,7 +141,17 @@
 //
 
 // Select the platform control flow mode for performance tuning.
+//      Nfcm, Normal Flow Control Mode
+//      UmaDr, UMA using Display Refresh flow control
+//      UmaIfcm, UMA using Isochronous Flow Control
+//      Ifcm, Isochronous Flow Control Mode (other than for UMA)
+//      Iommu, An IOMMU is in use in the system
+#if CONFIG(NORTHBRIDGE_AMD_CIMX_RD890_IOMMU)
+#define BLDCFG_IOMMU_SUPPORT TRUE
+#define BLDCFG_PLATFORM_CONTROL_FLOW_MODE Iommu
+#else
 #define BLDCFG_PLATFORM_CONTROL_FLOW_MODE Nfcm
+#endif
 
 /**
  * Enable the probe filtering performance tuning feature.

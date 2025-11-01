@@ -202,7 +202,11 @@ CONST INDIRECT_REG_ENTRY NbPorMiscTable[] = {
   {
     NB_MISC_REG75,
     (UINT32)~BIT28,
+#if CONFIG(NORTHBRIDGE_AMD_CIMX_RD890_IOMMU)
+    BIT0 | (4 << 13) | (4 << 16) | (4 << 19) | (4 << 22) | (4 << 25) | BIT29
+#else
     (4 << 13) | (4 << 16) | (4 << 19) | (4 << 22) | (4 << 25) | BIT29
+#endif
   },
 //PCIe CDR setting
   {

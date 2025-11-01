@@ -1357,14 +1357,13 @@ DefinitionBlock (
 					})
 				}
 
-#if 0 //acpi_create_hpet
 				Device(HPET) {
 					Name(_HID,EISAID("PNP0103"))
 					Name(CRS, ResourceTemplate() {
 		    				IRQNoFlags () {0}
 		    				IRQNoFlags () {2}
 		   			 	IRQNoFlags () {8}
-						Memory32Fixed(ReadOnly,0xFED00000, 0x00000400, MNT)	/* 1kb reserved space */
+						Memory32Fixed(ReadOnly,0xFED00000, 0x00000800, MNT)	/* 2kb reserved space */
 					})
 					Method(_STA, 0, NotSerialized) {
 						Return(0x0F) /* sata is visible */
@@ -1375,7 +1374,6 @@ DefinitionBlock (
 						Return(CRS)
 					}
 				} /* End Device(_SB.PCI0.LIBR.HPET) */
-#endif
 			} /* end LIBR */
 
 			Device(HPBR) {

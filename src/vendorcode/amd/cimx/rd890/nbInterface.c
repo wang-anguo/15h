@@ -142,9 +142,26 @@ AmdMidPostInit (
 {
   AGESA_STATUS  Status;
   Status = LibNbApiCall (NbMidPostInit, ConfigPtr);
-#ifndef  IOMMU_SUPPORT_DISABLE
-  NbIommuInit (ConfigPtr);
-#endif
+  return  Status;
+}
+
+/*----------------------------------------------------------------------------------------*/
+/**
+ * Amd Init all NB IOMMU at mid POST.
+ *
+ *
+ *
+  * @param[in] ConfigPtr   Northbridges configuration block pointer.
+ *
+ */
+
+AGESA_STATUS
+AmdMidPostInitIommu (
+  IN OUT   AMD_NB_CONFIG_BLOCK *ConfigPtr
+  )
+{
+  AGESA_STATUS  Status;
+  Status = NbIommuInit (ConfigPtr);
   return  Status;
 }
 
@@ -194,11 +211,30 @@ AmdLatePostInit (
 {
   AGESA_STATUS  Status;
   Status = LibNbApiCall (NbLatePostInit, ConfigPtr);
-#ifndef  IOMMU_SUPPORT_DISABLE
-  NbIommuAcpiFixup (ConfigPtr);
-#endif
   return  Status;
 }
+
+/*----------------------------------------------------------------------------------------*/
+/**
+ * Amd Init all NB IOMMU Acpi at late POST.
+ *
+ *
+ *
+ * @param[in] ConfigPtr   Northbridges configuration block pointer.
+ *
+ */
+
+AGESA_STATUS
+AmdLatePostInitIommuAcpi (
+  IN OUT   AMD_NB_CONFIG_BLOCK *ConfigPtr
+  )
+{
+  AGESA_STATUS  Status;
+
+  Status = NbIommuAcpiFixup (ConfigPtr);
+  return  Status;
+}
+
 /*----------------------------------------------------------------------------------------*/
 /**
  * NB Init at late post.
@@ -248,11 +284,9 @@ AmdS3InitIommu (
   )
 {
 
-#ifndef  IOMMU_SUPPORT_DISABLE
-  NbIommuInitS3 (ConfigPtr);
-#endif
-
-  return  AGESA_SUCCESS;
+  AGESA_STATUS  Status;
+  Status = NbIommuInitS3 (ConfigPtr);
+  return Status;
 }
 
 /*----------------------------------------------------------------------------------------*/

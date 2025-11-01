@@ -26,14 +26,10 @@ void sr56x0_rd890_disable_pcie_bridge(void);
 
 /**
  * Northbridge CIMX entries point
+ * used by mainboard romstage
  */
 void nb_Poweron_Init(void);
 void nb_Ht_Init(void);
 void nb_S3_Init(void);
-void nb_Early_Post_Init(void);
-void nb_Mid_Post_Init(void);
-void nb_Late_Post_Init(void);
-void nb_Pcie_Early_Init(void);
-void nb_Pcie_Late_Init(void);
 
 #endif /* _NB_CIMX_H_ */

@@ -23,6 +23,7 @@
 #include "nb_cimx.h"
 #include "rd890_cfg.h"
 
+#include <vendorcode/amd/cimx/rd890/nbIommu.h>
 
 /**
  * Global RD890 CIMX Configuration structure
@@ -31,45 +32,151 @@ static NB_CONFIG nb_cfg[MAX_NB_COUNT];
 static HT_CONFIG ht_cfg[MAX_NB_COUNT];
 static PCIE_CONFIG pcie_cfg[MAX_NB_COUNT];
 static AMD_NB_CONFIG_BLOCK gConfig;
+static uint8_t ivrs_buffer[0x2000]; // IVRS_BUFFER_SIZE
 
-
-/**
- * Reset PCIE Cores, Training the Ports selected by port_enable of devicetree
- * After this call EP are fully operational on particular NB
- */
-void nb_Pcie_Early_Init(void)
+static unsigned long rd890_iommu_write_acpi_tables(struct device *device, unsigned long current, struct acpi_rsdp *rsdp)
 {
-	LibSystemApiCall(AmdPcieEarlyInit, &gConfig); //AmdPcieEarlyInit(&gConfig);
+	AMD_NB_CONFIG *NbConfigPtr = NULL;
+	IOMMU_IVRS_HEADER *IvrsHeader;
+
+	// TODO, support multiple NB. See MAX_NB_COUNT
+	NbConfigPtr = &(gConfig.Northbridges[0]);
+
+	current = ALIGN(current, 8);
+	IvrsHeader = (IOMMU_IVRS_HEADER *)ivrs_buffer;
+	NbConfigPtr->pNbConfig->IommuIvrsBuffer = current;
+	NbConfigPtr->pNbConfig->AcpiRsdp = (UINT32)rsdp;
+	printk(BIOS_DEBUG, "%s: copying IVRS from %08X to %08X (%d bytes)\n", __func__, (unsigned int)ivrs_buffer, (unsigned int)current, IvrsHeader->Length);
+	memcpy((void*)current, ivrs_buffer, IvrsHeader->Length);
+	current += IvrsHeader->Length;
+	acpi_add_table(rsdp, (void*)NbConfigPtr->pNbConfig->IommuIvrsBuffer);
+
+	LibSystemApiCall(AmdLatePostInitIommuAcpi, &gConfig);
+	return current;
 }
 
-void nb_Pcie_Late_Init(void)
+static void rd890_iommu_enable_resources(struct device *dev)
 {
+	AMD_NB_CONFIG *NbConfigPtr = NULL;
+	NbConfigPtr = &(gConfig.Northbridges[0]);
+
+	pci_dev_enable_resources(dev);
+
+	LibSystemApiCall(AmdMidPostInitIommu, &gConfig);
+}
+
+static void rd890_iommu_set_resources(struct device *dev)
+{
+	AMD_NB_CONFIG *NbConfigPtr = NULL;
+	struct resource *res;
+
+	// TODO, support multiple NB. See MAX_NB_COUNT
+	NbConfigPtr = &(gConfig.Northbridges[0]);
+
+	/* Get the normal pci resources of this device */
+	pci_dev_read_resources(dev);
+
+	/* Get the allocated range */
+	res = find_resource(dev, 0x44);
+
+	if (res->base == 0) {
+		printk(BIOS_WARNING, "%s: Unable to allocate MMIO range to IOMMU\n", __func__);
+	}
+	printk(BIOS_DEBUG, "%s: IommuBaseAddress = %08X\n", __func__, (unsigned int)res->base);
+	/* Tell CIMx the IOMMU base address */
+	NbConfigPtr->pNbConfig->IommuBaseAddress = res->base;
+	NbConfigPtr->pNbConfig->IommuIvrsBuffer = (UINT32)ivrs_buffer;
+
+	pci_dev_set_resources(dev);
+}
+
+static void rd890_iommu_read_resource(struct device *dev)
+{
+	struct resource *res;
+
+	pci_dev_read_resources(dev);
+
+	res = new_resource(dev, 0x44);          /* IOMMU */
+	res->base = 0x00;
+	res->size = 0x4000;
+	res->limit = 0xFFFFFFFFUL;              /* res->base + res->size -1; */
+	res->align = 14;                        /* 16k alignment */
+	res->gran = 14;
+	res->flags = IORESOURCE_MEM | IORESOURCE_RESERVE;
+
+	compact_resources(dev);
+}
+
+static struct pci_operations rd890_iommu_ops_pci = {
+	.set_subsystem = pci_dev_set_subsystem,
+};
+
+static struct device_operations rd890_iommu_ops = {
+	.read_resources = rd890_iommu_read_resource,
+	.set_resources = rd890_iommu_set_resources,
+	.enable_resources = rd890_iommu_enable_resources,
+	.write_acpi_tables = rd890_iommu_write_acpi_tables,
+	.init = 0,
+	.scan_bus = 0,
+	.ops_pci = &rd890_iommu_ops_pci,
+};
+
+static const struct pci_driver rd890_iommu_driver __pci_driver = {
+	.ops = &rd890_iommu_ops,
+	.vendor = PCI_VENDOR_ID_ATI,
+	.device = PCI_DEVICE_ID_AMD_RD890_IOMMU,
+};
+
+static void rd890_ht_init(struct device *dev)
+{
+	void *ioapic_base;
+
+	pci_write_config32(dev, 0xF8, 0x1);
+	ioapic_base = (void *)(uintptr_t)(pci_read_config32(dev, 0xFC) & 0xfffffff0);
+	clear_ioapic(ioapic_base);
+	setup_ioapic(ioapic_base, 1);
+
 	LibSystemApiCall(AmdPcieLateInit, &gConfig);
-}
-
-void nb_Early_Post_Init(void)
-{
-	LibSystemApiCall(AmdEarlyPostInit, &gConfig);
-}
-
-void nb_Mid_Post_Init(void)
-{
-	LibSystemApiCall(AmdMidPostInit, &gConfig);
-}
-
-void nb_Late_Post_Init(void)
-{
 	LibSystemApiCall(AmdLatePostInit, &gConfig);
+}
+
+/* If IOAPIC's index changes, we should replace the pci_dev_set_resource(). */
+static void rd890_ht_set_resources(struct device *dev)
+{
+	AMD_NB_CONFIG *NbConfigPtr = NULL;
+
+	// TODO, support multiple NB. See MAX_NB_COUNT
+	NbConfigPtr = &(gConfig.Northbridges[0]);
+
+	/* set IOAPIC's index as 1 and make sure no one changes it. */
+	pci_write_config32(dev, 0xF8, 0x1);
+
+	/* Get the normal pci resources of this device */
+	pci_dev_read_resources(dev);
+
+	/* Tell CIMx the IO APIC base address */
+	NbConfigPtr->pNbConfig->IoApicBaseAddress = IO_APIC_ADDR;
+
+	pci_dev_set_resources(dev);
+}
+
+static void rd890_ht_read_resource(struct device *dev)
+{
+	pci_dev_read_resources(dev);
+
+	/* rpr6.2.(1). Write the Base Address Register (BAR) */
+	pci_write_config32(dev, 0xF8, 0x1); /* set IOAPIC's index as 1 and make sure no one changes it. */
+	pci_get_resource(dev, 0xFC); /* APIC located in sr5690 */
+
+	compact_resources(dev);
 }
 
 static void rd890_enable(struct device *dev)
 {
-	u32 address = 0;
 	u32 devfn;
 	AMD_NB_CONFIG *NbConfigPtr = NULL;
 
-	u8 nb_index = 0; /* The first IO Hub, TODO: other NBs */
-	address = MAKE_SBDFO(0, 0x0, 0x0, 0x0, 0x0);
+	u8 nb_index = 0; /* The first IO Hub, TODO: other NBs. See MAX_NB_COUNT */
 	NbConfigPtr = &(gConfig.Northbridges[nb_index]);
 
 	devfn = dev->path.pci.devfn;
@@ -88,74 +195,21 @@ static void rd890_enable(struct device *dev)
 		/* Reset PCIE Cores, Training the Ports selected by port_enable of devicetree
 		 * After this call EP are fully operational on particular NB
 		 */
-		nb_Pcie_Early_Init();
+		LibSystemApiCall(AmdPcieEarlyInit, &gConfig);
 
 		if (gConfig.StandardHeader.CalloutPtr != NULL) {
 			gConfig.StandardHeader.CalloutPtr(CB_AmdSetEarlyPostConfig, 0, (VOID*)NbConfigPtr);
 		}
-		nb_Early_Post_Init();
+		LibSystemApiCall(AmdEarlyPostInit, &gConfig);
 
 		if (gConfig.StandardHeader.CalloutPtr != NULL) {
 			gConfig.StandardHeader.CalloutPtr(CB_AmdSetMidPostConfig, 0, (VOID*)NbConfigPtr);
 		}
-		nb_Mid_Post_Init();
-		nb_Pcie_Late_Init();
-
-		if (gConfig.StandardHeader.CalloutPtr != NULL) {
-			gConfig.StandardHeader.CalloutPtr(CB_AmdSetLatePostConfig, 0, (VOID*)NbConfigPtr);
-		}
-		nb_Late_Post_Init();
+		LibSystemApiCall(AmdMidPostInit, &gConfig);
 	}
 }
 
-struct chip_operations northbridge_amd_cimx_rd890_ops = {
-	CHIP_NAME("ATI rd890")
-	.enable_dev = rd890_enable,
-};
-
-
-static void ioapic_init(struct device *dev)
-{
-	void *ioapic_base;
-
-	pci_write_config32(dev, 0xF8, 0x1);
-	ioapic_base = (void *)(uintptr_t)(pci_read_config32(dev, 0xFC) & 0xfffffff0);
-	clear_ioapic(ioapic_base);
-	setup_ioapic(ioapic_base, 1);
-}
-
-static void rd890_read_resource(struct device *dev)
-{
-	pci_dev_read_resources(dev);
-
-	/* rpr6.2.(1). Write the Base Address Register (BAR) */
-	pci_write_config32(dev, 0xF8, 0x1); /* set IOAPIC's index as 1 and make sure no one changes it. */
-	pci_get_resource(dev, 0xFC); /* APIC located in sr5690 */
-
-	compact_resources(dev);
-}
-
-/* If IOAPIC's index changes, we should replace the pci_dev_set_resource(). */
-static void rd890_set_resources(struct device *dev)
-{
-	pci_write_config32(dev, 0xF8, 0x1); /* set IOAPIC's index as 1 and make sure no one changes it. */
-	pci_dev_set_resources(dev);
-}
-
-static struct pci_operations lops_pci = {
-	.set_subsystem = pci_dev_set_subsystem,
-};
-
-static struct device_operations ht_ops = {
-	.read_resources = rd890_read_resource,
-	.set_resources = rd890_set_resources,
-	.enable_resources = pci_dev_enable_resources,
-	.init = ioapic_init,
-	.scan_bus = 0,
-	.ops_pci = &lops_pci,
-};
-
-static const unsigned short driver_ids[] = {
+static const unsigned short ht_devices[] = {
 	PCI_DEVICE_ID_AMD_SR5690_HT,
 	PCI_DEVICE_ID_AMD_SR5670_HT,
 	PCI_DEVICE_ID_AMD_SR5650_HT,
@@ -165,8 +219,25 @@ static const unsigned short driver_ids[] = {
 	0
 };
 
-static const struct pci_driver ht_driver_sr5690 __pci_driver = {
-	.ops = &ht_ops,
+static struct pci_operations rd890_ht_ops_pci = {
+	.set_subsystem = pci_dev_set_subsystem,
+};
+
+static struct device_operations rd890_ht_ops = {
+	.read_resources = rd890_ht_read_resource,
+	.set_resources = rd890_ht_set_resources,
+	.init = rd890_ht_init,
+	.scan_bus = 0,
+	.ops_pci = &rd890_ht_ops_pci,
+};
+
+static const struct pci_driver rd890_ht_driver __pci_driver = {
+	.ops = &rd890_ht_ops,
 	.vendor = PCI_VENDOR_ID_ATI,
-	.devices= driver_ids,
+	.devices = ht_devices,
+};
+
+struct chip_operations northbridge_amd_cimx_rd890_ops = {
+	CHIP_NAME("ATI RD890")
+	.enable_dev = rd890_enable,
 };

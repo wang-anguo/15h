@@ -262,6 +262,7 @@ PcieConfigureBridgeResources (
   UINT32      Value;
   UINT32      MmioBase;
 
+  CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_TRACE), "[NBPCIE]PcieConfigureBridgeResources Enter\n"));
   pPcieConfig = GET_PCIE_CONFIG_PTR (pConfig);
   MmioBase = pPcieConfig->TempMmioBaseAddress << 20;
   if (MmioBase == 0) {
@@ -275,6 +276,7 @@ PcieConfigureBridgeResources (
   LibNbPciWrite (Port.AddressValue | NB_PCIP_REG24, AccessWidth32, &Value, pConfig);
   Value = 0x2;
   LibNbPciWrite (Port.AddressValue | NB_PCIP_REG04, AccessWidth8, &Value, pConfig);
+  CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBPCIE_TRACE), "[NBPCIE]PcieConfigureBridgeResources Exit\n"));
   return AGESA_SUCCESS;
 }
 

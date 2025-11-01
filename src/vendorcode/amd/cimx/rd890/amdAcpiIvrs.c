@@ -93,7 +93,7 @@ LibAmdGetFirstIvrsBlockEntry (
   // If our pointer is not to an IVRS, return error
 
 //  if (((DESCRIPTION_HEADER*)IvrsPtr)->Signature != 'SRVI') return NULL;
-  if (((DESCRIPTION_HEADER*)IvrsPtr)->Signature != Int32FromChar ('S', 'R', 'V', 'I')) return NULL;
+  if (((DESCRIPTION_HEADER*)IvrsPtr)->Signature != Int32FromChar ('I', 'V', 'R', 'S')) return NULL;
   BlockPtr = (UINT8*)IvrsPtr + 48;
   // Search each entry incrementing by it's size field in offset 2 until
   // we reach the end of the IVRS
@@ -130,7 +130,7 @@ LibAmdGetNextIvrsBlockEntry (
   UINT8* BlockPtr;
   // If our pointer is not to an IVRS, return error
 //  if (((DESCRIPTION_HEADER*)IvrsPtr)->Signature != 'SRVI') return NULL;
-  if (((DESCRIPTION_HEADER*)IvrsPtr)->Signature != Int32FromChar ('S', 'R', 'V', 'I')) return NULL;
+  if (((DESCRIPTION_HEADER*)IvrsPtr)->Signature != Int32FromChar ('I', 'V', 'R', 'S')) return NULL;
 
   BlockPtr = (UINT8*)CurrentStructurePtr + *((UINT16*) ((UINT8*)CurrentStructurePtr + 2));
 

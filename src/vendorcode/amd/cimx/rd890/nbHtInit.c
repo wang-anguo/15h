@@ -272,7 +272,10 @@ HtLibEarlyInit (
   IsIfcmEnabled = (Value & BIT4) ? TRUE:FALSE;
   if (IsIfcmEnabled) {
     // Enable Isoc in chipset
+    CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBHT_TRACE), "[NBHT]HtLibEarlyInit Isochronous enabled\n"));
     LibNbPciRMW (((pConfig->NbPciAddress.AddressValue) | (NB_PCI_REGC8 + 1)), AccessWidth8, 0xFC, BIT4, pConfig);
+  } else {
+    CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NBHT_TRACE), "[NBHT]HtLibEarlyInit Isochronous disabled\n"));
   }
 
   if (pHtConfig->LinkBufferOptimization == ON) {

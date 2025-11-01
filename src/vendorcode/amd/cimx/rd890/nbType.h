@@ -240,6 +240,8 @@ typedef  struct {
   UINT32                    SSID;                     ///< NB Subsystem/Subvendor ID
   UINT32                    IommuTpologyInfo;         ///< For intrernal use only
   UINT32                    Reserved4[8];             ///< Reserved for internal use.
+  UINT32                    IommuIvrsBuffer;
+  UINT32                    AcpiRsdp;
 } NB_CONFIG;
 
 

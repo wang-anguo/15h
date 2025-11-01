@@ -133,7 +133,7 @@ IOMMU_IVRS_HEADER
 STATIC
 RD890S_DfltHeader = {
 //  'SRVI',
-  Int32FromChar ('S', 'R', 'V', 'I'),
+  Int32FromChar ('I', 'V', 'R', 'S'),
   48,
   1,
   0,
@@ -388,10 +388,11 @@ NbIommuInit (
   CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuInit Enter\n"));
 
   if (NbIommuEnabled (ConfigPtr)) {
-    NbIommuHwInit (ConfigPtr);
-    NbIommuAcpiInit (ConfigPtr);
-    NbIommuHwTopologyInit (ConfigPtr);
+    if(Status == AGESA_SUCCESS) Status = NbIommuHwInit (ConfigPtr);
+    if(Status == AGESA_SUCCESS) Status = NbIommuAcpiInit (ConfigPtr);
+    if(Status == AGESA_SUCCESS) Status = NbIommuHwTopologyInit (ConfigPtr);
   } else {
+    CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuInit IOMMU Disabled\n"));
     Status = AGESA_UNSUPPORTED;
   }
 
@@ -452,6 +453,8 @@ NbIommuHwInit (
   UINT8             NorthbridgeId;
   AMD_NB_CONFIG     *pConfig;
 
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
+
   for (NorthbridgeId = 0; NorthbridgeId <= ConfigPtr->NumberOfNorthbridges; NorthbridgeId++) {
     pConfig = &ConfigPtr->Northbridges[NorthbridgeId];
     ConfigPtr->CurrentNorthbridge = NorthbridgeId;
@@ -476,6 +479,8 @@ NbIommuHwTopologyInit (
 {
   UINT8             NorthbridgeId;
   AMD_NB_CONFIG     *pConfig;
+
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
 
   for (NorthbridgeId = 0; NorthbridgeId <= ConfigPtr->NumberOfNorthbridges; NorthbridgeId++) {
     pConfig = &ConfigPtr->Northbridges[NorthbridgeId];
@@ -516,14 +521,17 @@ NbIommuAcpiInit (
 
   CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiInit Enter\n"));
 
-  // FIXME: this allocation fails (Fam15)
   // Get a buffer for IVRS
   Ivrs.BufferLength = IVRS_BUFFER_SIZE;
-  Status = LibNbCallBack (PHCB_AmdAllocateBuffer, (UINTN)&Ivrs, &ConfigPtr->Northbridges[0]);
-  if (Status != AGESA_SUCCESS || Ivrs.BufferPtr == NULL) {
-    // Table creation failed
-    return AGESA_ERROR;
+  Ivrs.BufferPtr = (VOID*)pConfig->pNbConfig->IommuIvrsBuffer;
+  if(Ivrs.BufferPtr == NULL) {
+	  Status = LibNbCallBack (PHCB_AmdAllocateBuffer, (UINTN)&Ivrs, &ConfigPtr->Northbridges[0]);
+	  if (Status != AGESA_SUCCESS || Ivrs.BufferPtr == NULL) {
+	    // Table creation failed
+	    return AGESA_ERROR;
+	  }
   }
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiInit [IVRS TableAddress = 0x%x]\n", (UINT32)(Ivrs.BufferPtr)));
 
   // Clear buffer before using
   LibAmdMemFill (Ivrs.BufferPtr, 0, Ivrs.BufferLength, (AMD_CONFIG_PARAMS *)&(pConfig->sHeader));
@@ -545,7 +553,6 @@ NbIommuAcpiInit (
 
   LibAmdSetAcpiTable (Ivrs.BufferPtr, TRUE, &IvrsHandle);
 
-  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiInit [IVRS TableAddress = 0x%x]\n", (UINT32)(Ivrs.BufferPtr)));
   CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiInit Exit [Status = 0x%x]\n", Status));
 
   return AGESA_SUCCESS;
@@ -599,6 +606,7 @@ NbIommuAcpiFixup (
 
   // Any Iommus enabled?  If no, we don't need to patch anything
   if (!IommuFound) {
+    CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiFixup No IOMMU Found\n"));
     return AGESA_SUCCESS;
   }
 
@@ -608,23 +616,26 @@ NbIommuAcpiFixup (
   // If these conditions fail, abort
 
 //  Status = LibAmdGetAcpiTable ('SRVI', &IvrsPtr, &IvrsHandle);
-  Status = LibAmdGetAcpiTable (Int32FromChar ('S', 'R', 'V', 'I'), &IvrsPtr, &IvrsHandle);
+  Status = LibAmdGetAcpiTable((VOID*)pConfig->pNbConfig->AcpiRsdp, Int32FromChar ('I', 'V', 'R', 'S'), &IvrsPtr, &IvrsHandle);
   if (Status != AGESA_SUCCESS) {
 //    REPORT_EVENT (AGESA_ERROR, GENERAL_ERROR_LOCATE_ACPI_TABLE, 'SRVI', 0, 0, 0, pConfig);
-    REPORT_EVENT (AGESA_ERROR, GENERAL_ERROR_LOCATE_ACPI_TABLE, Int32FromChar ('S', 'R', 'V', 'I'), 0, 0, 0, pConfig);
+    REPORT_EVENT (AGESA_ERROR, GENERAL_ERROR_LOCATE_ACPI_TABLE, Int32FromChar ('I', 'V', 'R', 'S'), 0, 0, 0, pConfig);
+    CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiFixup No IVRS Table Found\n"));
     return AGESA_ERROR;
   }
 
 //  Status = LibAmdGetAcpiTable ('CIPA', &MadtPtr, NULL);
-  Status = LibAmdGetAcpiTable (Int32FromChar ('C', 'I', 'P', 'A'), &MadtPtr, NULL);
+  Status = LibAmdGetAcpiTable((VOID*)pConfig->pNbConfig->AcpiRsdp, Int32FromChar ('A', 'P', 'I', 'C'), &MadtPtr, NULL);
   if (Status != AGESA_SUCCESS) {
 //    REPORT_EVENT (AGESA_ERROR, GENERAL_ERROR_LOCATE_ACPI_TABLE, 'CIPA', 0, 0, 0, pConfig);
-    REPORT_EVENT (AGESA_ERROR, GENERAL_ERROR_LOCATE_ACPI_TABLE, Int32FromChar ('C', 'I', 'P', 'A'), 0, 0, 0, pConfig);
+    REPORT_EVENT (AGESA_ERROR, GENERAL_ERROR_LOCATE_ACPI_TABLE, Int32FromChar ('A', 'P', 'I', 'C'), 0, 0, 0, pConfig);
+    CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiFixup No MADT Table Found\n"));
     return AGESA_ERROR;
   }
 
   IvhdPtr = LibAmdGetFirstIvrsBlockEntry (TYPE_IVHD, IvrsPtr);
   if (IvhdPtr == NULL) {
+    CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]NbIommuAcpiFixup No IVRS Entry Found\n"));
     return AGESA_ERROR;
   }
 
@@ -684,6 +695,8 @@ IommuInit (
   UINT8     CapBase;
   PCI_ADDR  IommuPciAddress;
   UINTN     i;
+
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
 
   IommuPciAddress = pConfig->NbPciAddress;
   IommuPciAddress.Address.Function = NB_IOMMU;
@@ -769,6 +782,7 @@ IommuTopologyInit (
   IN OUT   AMD_NB_CONFIG  *pConfig
   )
 {
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
   // Set L2 Caches Hash Control based on maximum bus, device, function
   IommuInitL2CacheControl ((IOMMU_PCI_TOPOLOGY*) &pConfig->pNbConfig->IommuTpologyInfo, pConfig);
   return AGESA_SUCCESS;
@@ -812,10 +826,12 @@ IommuInitL2CacheControl (
   UINT8     DevBitsUsed;
   UINT8     BusBitsUsed;
 
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
+
   IommuPciAddress = pConfig->NbPciAddress;
   IommuPciAddress.Address.Function = NB_IOMMU;
 
-  CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NB_TRACE), "    L2Cache Init Max Bus = 0x%x Max Device = 0x%x Mux Func = 0x%x\n", PciPtr->MaxBus, PciPtr->MaxDevice, PciPtr->MaxFunction));
+  CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NB_TRACE), "    L2Cache Init Max Bus = 0x%x Max Device = 0x%x Max Func = 0x%x\n", PciPtr->MaxBus, PciPtr->MaxDevice, PciPtr->MaxFunction));
 
   FuncBitsUsed = CIMX_MAX (IommuGetLog2 (PciPtr->MaxFunction + 1), 3);
   DevBitsUsed = IommuGetLog2 (PciPtr->MaxDevice + 1);
@@ -1023,6 +1039,8 @@ IommuPlaceHeader (
 {
   IOMMU_IVRS_HEADER *HeaderPtr;
   HeaderPtr = (IOMMU_IVRS_HEADER *)BufferPtr;
+
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
   LibAmdMemCopy (HeaderPtr, &RD890S_DfltHeader, sizeof (IOMMU_IVRS_HEADER), (AMD_CONFIG_PARAMS *)&(pConfig->sHeader));
 }
 
@@ -1050,9 +1068,12 @@ IommuPlaceIvmdAndExclusions (
   HeaderPtr = (IOMMU_IVRS_HEADER *)BufferPtr;
   IvmdPtr = (IOMMU_IVMD_ENTRY *)BufferPtr;
 
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuPlaceIvmdAndExclusions Enter\n"));
+
   Status = LibNbCallBack (PHCB_AmdGetExclusionTable, (UINTN)&pExclusion, pConfig);
   if (Status == AGESA_SUCCESS) {
     EntryCount = (UINT8) ((pExclusion->TableLength - sizeof (UINTN)) / sizeof (IOMMU_EXCLUSIONRANGE));
+    CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuPlaceIvmdAndExclusions %d Table Entries\n", EntryCount));
     for (CurrentExclusion = 0; CurrentExclusion < EntryCount; CurrentExclusion++) {
       IvmdPtr = (IOMMU_IVMD_ENTRY*) ((UINT8*)HeaderPtr + HeaderPtr->Length);
       IvmdPtr->Type = TYPE_IVMD_ALL;    // 20h = All peripherals
@@ -1066,6 +1087,7 @@ IommuPlaceIvmdAndExclusions (
       HeaderPtr->Length += 32;          // Update size of IVRS
     }
   }
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuPlaceIvmdAndExclusions Exit\n"));
 }
 
 /*----------------------------------------------------------------------------------------*/
@@ -1086,6 +1108,8 @@ IommuPlaceIvhdAndScanDevices (
   IOMMU_IVRS_HEADER   *HeaderPtr;
   IOMMU_IVHD_ENTRY    *IvhdPtr;
   PCI_ADDR            IommuPciAddress;
+
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuPlaceIvhdAndScanDevices Enter\n"));
 
   HeaderPtr = (IOMMU_IVRS_HEADER *)BufferPtr;
   IvhdPtr = (IOMMU_IVHD_ENTRY *)BufferPtr;
@@ -1116,6 +1140,7 @@ IommuPlaceIvhdAndScanDevices (
   IommuIvhdApicsAndHpets (IvhdPtr, pConfig);
   pConfig->pNbConfig->IommuTpologyInfo = *((UINT32*) &PciFlags);
   HeaderPtr->Length += IvhdPtr->Length;
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuPlaceIvhdAndScanDevices Exit\n"));
 }
 
 /*----------------------------------------------------------------------------------------*/
@@ -1139,6 +1164,8 @@ IommuIvhdNorthbridgeDevices (
   IOMMU_DEVICELIST  *pDevices;
   PCI_ADDR          NbPciAddress;
   PCI_ADDR          IommuPciAddress;
+
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuIvhdNorthbridgeDevices Enter\n"));
 
   pDevices = &RD890S_DfltDevices;
   NbPciAddress = pConfig->NbPciAddress;
@@ -1166,6 +1193,7 @@ IommuIvhdNorthbridgeDevices (
     //}
     //PciPtr->PhantomFunction = FALSE;
   }
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuIvhdNorthbridgeDevices Exit\n"));
 }
 
 /*----------------------------------------------------------------------------------------*/
@@ -1185,6 +1213,9 @@ IommuIvhdSouthbridgeDevices (
 {
   UINT16    DeviceId;
   PCI_ADDR  IommuPciAddress;
+
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuIvhdSouthbridgeDevices Enter\n"));
+
   IommuPciAddress = pConfig->NbPciAddress;
   IommuPciAddress.Address.Function = NB_IOMMU;
 
@@ -1213,6 +1244,7 @@ IommuIvhdSouthbridgeDevices (
   IommuCreate8ByteEntry (DE_SPECIAL, DATA_ALLINTS, 0, 0, DeviceId, VARIETY_HPET, IvhdPtr);
 #endif
 
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuIvhdSouthbridgeDevices Exit\n"));
 }
 
 /*----------------------------------------------------------------------------------------*/
@@ -1232,6 +1264,8 @@ IommuIvhdApicsAndHpets (
   PCI_ADDR  PciAddress;
   UINT16    DeviceId;
   UINT32    PciData;
+
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
 
   PciAddress = pConfig->NbPciAddress;
 
@@ -1316,6 +1350,8 @@ IommuCreateDeviceEntry (
   LibNbPciRead (PciAddress.AddressValue | PCI_CLASS, AccessWidth32, &ClassCode, pConfig);
   ClassCode = (ClassCode >> 16) & 0xFFFF;   // Keep class code and sub-class only
 
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]%s Enter (Bus %02X Dev %02X Fun %02X)\n", __func__, (DeviceId >> 8) & 0xFF, (DeviceId >> 3) & 0x1F, DeviceId & 0x7));
+
   // THREE STAGES TO THIS FUNCTION
   // 1. Check for multifunction or special devices
   // 2. Place device entry for the current device ID
@@ -1370,6 +1406,8 @@ IommuCreateDeviceEntry (
   //if (IommuCheckPhantom (DeviceId, pConfig)) {
   //  PciPtr->PhantomFunction = TRUE;
   //}
+
+  CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NB_TRACE), "[NBIOMMU]MultiFunction = %d, DiscreteEntry = %d, SubFunction = %d, ClassCode = %d\n", MultiFunction, DiscreteEntry, SubFunction, ClassCode));
 
   if (!MultiFunction || DiscreteEntry) {
     //For Device 0x14, function 0, Set DATA_ALLINTS
@@ -1448,28 +1486,36 @@ IommuCreateDeviceEntry (
     }
 
     switch (Type) {
-    case  0:
-      //PCI
-      IommuRecordBusDevFuncInfo (PciPtr, DeviceId, pConfig);
-      IommuCreate8ByteEntry (DE_ALIASSTART, DATA_NOINTS, (UINT16) (BusData & 0xFF00), 0, DeviceId, 0, IvhdPtr);
-      IommuCreate4ByteEntry (DE_END, 0, (UINT16) (((BusData & 0xFF0000) >> 8) + 0xFF), IvhdPtr);
+    case  0: //PCI
+      CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NB_TRACE), "[NBIOMMU]%s: PCI device 0x%x, BusData %x\n", __func__, DeviceId, BusData));
+      for (DeviceCount = 0; DeviceCount <= 0x1f; DeviceCount++) {
+	PciAddress.AddressValue = MAKE_SBDFO (0, (BusData >> 8) & 0xFF, DeviceCount, 0, 0);
+	LibNbPciRead (PciAddress.AddressValue | PCI_HEADER, AccessWidth32, &PciData, pConfig);
+	if ((PciData & PCI_MULTIFUNCTION) != 0) { // Check if bridged PCI device is a multifunction device
+          for (FunctionCount = 0; FunctionCount <= 0x7; FunctionCount++) {
+            IommuCreateDeviceEntry (PciPtr, ((UINT16) (BusData & 0xFF00)) | (DeviceCount << 3) | FunctionCount, IvhdPtr, pConfig);
+          }
+	} else {
+          IommuCreateDeviceEntry (PciPtr, ((UINT16) (BusData & 0xFF00)) | (DeviceCount << 3), IvhdPtr, pConfig);
+	}
+      }
       break;
-    case  1:
-      //Pcie (non hot plug)
+    case  1: //Pcie (non hot plug)
+      CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NB_TRACE), "[NBIOMMU]%s: PCIe device 0x%x, BusData %x\n", __func__, DeviceId, BusData));
       for (DeviceCount = 0; DeviceCount <= 0x1f; DeviceCount++) {
         for (FunctionCount = 0; FunctionCount <= 0x7; FunctionCount++) {
           IommuCreateDeviceEntry (PciPtr, ((UINT16) (BusData & 0xFF00)) | (DeviceCount << 3) | FunctionCount, IvhdPtr, pConfig);
         }
       }
       break;
-    case  2:
-      //PCIx
+    case  2: //PCIx
+      CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NB_TRACE), "[NBIOMMU]%s: PCIx device 0x%x, BusData %x\n", __func__, DeviceId, BusData));
       IommuRecordBusDevFuncInfo (PciPtr, (UINT16) (BusData & 0xFF00), pConfig);
       IommuCreate8ByteEntry (DE_ALIASSTART, DATA_NOINTS, (UINT16) ((BusData & 0xFF00) | ( 1 << 3)), 0, (UINT16) (BusData & 0xFF00), 0, IvhdPtr);
       IommuCreate4ByteEntry (DE_END, 0, (UINT16) (((BusData & 0xFF0000) >> 8) + 0xFF), IvhdPtr);
       break;
-    case 3:
-      //For Hot plug ports, set all devices and functions behind the secondary bus.
+    case 3: //For Hot plug ports, set all devices and functions behind the secondary bus.
+      CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NB_TRACE), "[NBIOMMU]%s: Hotplug device 0x%x, BusData %x\n", __func__, DeviceId, BusData));
       IommuCreate4ByteEntry (DE_START, 0, (UINT16) (BusData & 0xFF00), IvhdPtr);            // Secondary bus, Device 0, Function 0
       IommuCreate4ByteEntry (DE_END, 0, (UINT16) ((BusData & 0xFF00) | (0x1F << 3) | 7), IvhdPtr); // Secondary bus, Device 1f, Function 7
       break;
@@ -1477,6 +1523,7 @@ IommuCreateDeviceEntry (
       CIMX_ASSERT (FALSE);
     }
   }
+  CIMX_TRACE ((TRACE_DATA (ConfigPtr, CIMX_NB_TRACE), "[NBIOMMU]IommuCreateDeviceEntry Exit\n"));
 }
 
 /*----------------------------------------------------------------------------------------*/
@@ -1496,7 +1543,10 @@ IommuRecordBusDevFuncInfo (
 {
   UINT16    ExtendedCapabilityPtr;
   PCI_ADDR  Device;
+
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
   Device.AddressValue = MAKE_SBDFO (0, DeviceId >> 8, (DeviceId >> 3) & 0x1f, DeviceId & 0x7, 0);
+
 #ifdef  EXCLUDE_SB_DEVICE_FROM_L2_HASH
   if ((UINT8)Device.Address.Bus == 0) {
     AMD_NB_CONFIG_BLOCK *ConfigPtr = GET_BLOCK_CONFIG_PTR (pConfig);
@@ -1505,7 +1555,7 @@ IommuRecordBusDevFuncInfo (
     }
   }
 #endif
-  Device.AddressValue = MAKE_SBDFO (0, DeviceId >> 8, (DeviceId >> 3) & 0x1f, DeviceId & 0x7, 0);
+
   CIMX_TRACE ((TRACE_DATA (GET_BLOCK_CONFIG_PTR (pConfig), CIMX_NB_TRACE), "    Device Data For L2 Hash Bus = 0x%x Device = 0x%x Func = 0x%x\n", Device.Address.Bus, Device.Address.Device, Device.Address.Function));
   ExtendedCapabilityPtr = LibNbFindPcieExtendedCapability (Device.AddressValue, 0x10, pConfig);
   if (ExtendedCapabilityPtr != 0) {
@@ -1551,7 +1601,7 @@ IommuCreate4ByteEntry (
 
   IvhdPtr->DeviceEntry[AlignedDeviceEntryIndex] = Buffer;
   IvhdPtr->Length += (4 + (AlignedDeviceEntryIndex - DeviceEntryIndex) * 4);
-  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]Added entry - [0x%x]\n", Buffer));
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]Added 4Byte entry - [0x%x]\n", Buffer));
 }
 
 /*----------------------------------------------------------------------------------------*/
@@ -1593,7 +1643,7 @@ IommuCreate8ByteEntry (
   IvhdPtr->DeviceEntry[AlignedDeviceEntryIndex] = ((UINT32*)&Buffer)[0];
   IvhdPtr->DeviceEntry[AlignedDeviceEntryIndex + 1] = ((UINT32*)&Buffer)[1];
   IvhdPtr->Length += (8 + (AlignedDeviceEntryIndex - DeviceEntryIndex) * 4);
-  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]Added entry - [0x%llx]\n", Buffer));
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]Added 8Byte entry - [0x%llx]\n", Buffer));
 }
 
 /*----------------------------------------------------------------------------------------*/
@@ -1613,6 +1663,8 @@ IommuFinalizeIvrs (
   IOMMU_IVRS_HEADER *HeaderPtr;
   PCI_ADDR          IommuPciAddress;
   UINT32            PciData;
+
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
 
   HeaderPtr = (IOMMU_IVRS_HEADER *)BufferPtr;
   IommuPciAddress = pConfig->NbPciAddress;
@@ -1647,6 +1699,8 @@ IommuGetApicBaseAddress (
   PCI_ADDR  PciAddress;
   UINT16    DeviceId;
   UINT32    Data;
+
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
 
   // If no pointer provided, return no base address
   if (DevicePtr == NULL) {
@@ -1704,6 +1758,8 @@ IommuGetApicId (
 {
   VOID  *EntryPtr;
 
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
+
   EntryPtr = LibAmdGetFirstMadtStructure (MADT_APIC_TYPE, MadtPtr);
 
   do {
@@ -1732,6 +1788,8 @@ NbIommuDisconnectPcieCore (
 {
   PCI_ADDR  IommuPciAddress;
   UINT32    Value;
+
+  CIMX_TRACE ((TRACE_DATA (NULL, CIMX_NB_TRACE), "[NBIOMMU]%s\n", __func__));
   IommuPciAddress = pConfig->NbPciAddress;
   IommuPciAddress.Address.Function = NB_IOMMU;
   Value = 1 << ((0x4310 >> (CoreId * 4)) & 0xf);

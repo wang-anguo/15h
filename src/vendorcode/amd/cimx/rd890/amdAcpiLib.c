@@ -82,37 +82,45 @@
 
 AGESA_STATUS
 LibAmdGetAcpiTable (
+  IN      UINT32    *RsdPtr,
   IN      UINT32    Signature,
   IN      VOID      **TablePtr,
   IN      UINTN     *TableHandle
   )
 {
-  UINT32  i;
-  UINT32* RsdPtr;
-  UINT32* Rsdt;
-  DESCRIPTION_HEADER* CurrentTable;
+	UINT32  i;
+	UINT32* Rsdt;
+	DESCRIPTION_HEADER* CurrentTable;
 
-  RsdPtr = (UINT32*) (UINTN)0xe0000;
-  Rsdt = NULL;
+	Rsdt = NULL;
 
-  do {
-//    if (*RsdPtr == ' DSR' && *(RsdPtr + 1) == ' RTP') {
-	if ((*RsdPtr == Int32FromChar (' ', 'D', 'S', 'R')) && (*(RsdPtr+1) == Int32FromChar (' ', 'R', 'T', 'P'))) {
-      Rsdt = (UINT32*) (UINTN) (((RSDP_AGESA*)RsdPtr)->RsdtAddress);
-      break;
-    }
-    RsdPtr += 4;
-  } while (RsdPtr <= (UINT32*) ((UINTN)0xffff0));
-  if (Rsdt != NULL && LibAmdGetAcpiTableChecksum (Rsdt) == 0) {
-    for (i = 0; i < (((DESCRIPTION_HEADER*)Rsdt)->Length - sizeof (DESCRIPTION_HEADER)) / 4; i++) {
-      CurrentTable = (DESCRIPTION_HEADER*) (UINTN)*(UINT32*) ((UINT8*)Rsdt + sizeof (DESCRIPTION_HEADER) + i*4);
-      if (CurrentTable->Signature == Signature) {
-        *TablePtr = CurrentTable;
-        return AGESA_SUCCESS;
-      }
-    }
-  }
-  return AGESA_UNSUPPORTED;
+	if(RsdPtr) {
+		if ((*RsdPtr == Int32FromChar ('R', 'S', 'D', ' ')) && (*(RsdPtr+1) == Int32FromChar ('P', 'T', 'R', ' '))) {
+			Rsdt = (UINT32*) (UINTN) (((RSDP_AGESA*)RsdPtr)->RsdtAddress);
+		}
+	}
+
+	if(!Rsdt) {
+		RsdPtr = (UINT32*) (UINTN)0xe0000;
+		do {
+			//    if (*RsdPtr == ' DSR' && *(RsdPtr + 1) == ' RTP') {
+			if ((*RsdPtr == Int32FromChar ('R', 'S', 'D', ' ')) && (*(RsdPtr+1) == Int32FromChar ('P', 'T', 'R', ' '))) {
+				Rsdt = (UINT32*) (UINTN) (((RSDP_AGESA*)RsdPtr)->RsdtAddress);
+				break;
+			}
+			RsdPtr += 4;
+		} while (RsdPtr <= (UINT32*) ((UINTN)0xffff0));
+	}
+	if (Rsdt != NULL && LibAmdGetAcpiTableChecksum (Rsdt) == 0) {
+		for (i = 0; i < (((DESCRIPTION_HEADER*)Rsdt)->Length - sizeof (DESCRIPTION_HEADER)) / 4; i++) {
+			CurrentTable = (DESCRIPTION_HEADER*) (UINTN)*(UINT32*) ((UINT8*)Rsdt + sizeof (DESCRIPTION_HEADER) + i*4);
+			if (CurrentTable->Signature == Signature) {
+				*TablePtr = CurrentTable;
+				return AGESA_SUCCESS;
+			}
+		}
+	}
+	return AGESA_UNSUPPORTED;
 }
 
 /*----------------------------------------------------------------------------------------*/

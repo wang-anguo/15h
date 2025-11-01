@@ -25,6 +25,7 @@ chip northbridge/amd/agesa/family15/root_complex
 				chip northbridge/amd/cimx/rd890 # Southbridge PCI side of HT Root complex
 					device pci 0.0 on  end # HT Root Complex 0x9600
 					device pci 0.1 off end # CLKCONFIG
+					device pci 0.2 on  end # IOMMU
 					device pci 2.0 on  end # GPP1 Port0 (PCIe Slot7)
 					device pci 3.0 on  end # GPP1 Port1 (PCIe Slot6)
 					device pci 4.0 on  end # GPP3a Port0 (PCIe Slot5)

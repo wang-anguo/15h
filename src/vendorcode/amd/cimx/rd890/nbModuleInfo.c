@@ -62,7 +62,7 @@
  */
 VOLATILE  AMD_MODULE_HEADER mNbModuleID = {
 //  'DOM$',
-  Int32FromChar ('D', 'O', 'M', '$'),
+  Int32FromChar ('$', 'M', 'O', 'D'),
   CIMX_NB_ID,
   CIMX_NB_REVISION,
   AmdNbDispatcher,

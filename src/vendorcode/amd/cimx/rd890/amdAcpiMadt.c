@@ -92,7 +92,7 @@ LibAmdGetFirstMadtStructure (
 
   // If our pointer is not to an IVRS, return error
 //  if (((DESCRIPTION_HEADER*)MadtPtr)->Signature != 'CIPA') {
-  if (((DESCRIPTION_HEADER*)MadtPtr)->Signature != Int32FromChar ('C', 'I', 'P', 'A')) {
+  if (((DESCRIPTION_HEADER*)MadtPtr)->Signature != Int32FromChar ('A', 'P', 'I', 'C')) {
     return NULL;
   }
   BlockPtr = (UINT8*)MadtPtr + 44;
@@ -132,7 +132,7 @@ LibAmdGetNextMadtStructure (
 
   // If our pointer is not to an IVRS, return error
 //  if (((DESCRIPTION_HEADER*)MadtPtr)->Signature != 'CIPA') {
-  if (((DESCRIPTION_HEADER*)MadtPtr)->Signature != Int32FromChar ('C', 'I', 'P', 'A')) {
+  if (((DESCRIPTION_HEADER*)MadtPtr)->Signature != Int32FromChar ('A', 'P', 'I', 'C')) {
     return NULL;
   }
 

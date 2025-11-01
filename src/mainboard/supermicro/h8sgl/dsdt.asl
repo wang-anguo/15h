@@ -1373,7 +1373,6 @@ DefinitionBlock (
 					})
 				}
 
-#if 0 //acpi_create_hpet
 				Device(HPET) {
 					Name(_HID,EISAID("PNP0103"))
 					Name(CRS, ResourceTemplate() {
@@ -1391,7 +1390,6 @@ DefinitionBlock (
 						Return(CRS)
 					}
 				} /* End Device(_SB.PCI0.LIBR.HPET) */
-#endif
 			} /* end LIBR */
 
 			Device(HPBR) {

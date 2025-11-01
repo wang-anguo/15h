@@ -306,7 +306,7 @@ typedef struct {
 } IOMMU_IVMD_ENTRY;
 
 //#define IVRS_HANDLE 'SRVI'
-#define IVRS_HANDLE Int32FromChar ('S', 'R', 'V', 'I')
+#define IVRS_HANDLE Int32FromChar ('I', 'V', 'R', 'S')
 
 #define L2_DTC_CONTROL    0x10
 #define L2_ITC_CONTROL    0x14

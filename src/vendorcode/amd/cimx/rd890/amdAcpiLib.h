@@ -116,11 +116,11 @@ LibAmdSetAcpiTable (
 
 AGESA_STATUS
 LibAmdGetAcpiTable (
+  IN      UINT32  *RsdPtr,
   IN      UINT32  Signature,
   IN      VOID    **TablePtr,
   IN      UINTN   *TableHandle
   );
-
 
 VOID
 LibAmdUpdateAcpiTableChecksum (

@@ -82,12 +82,22 @@ AmdMidPostInit (
   );
 
 AGESA_STATUS
+AmdMidPostInitIommu (
+  IN  OUT AMD_NB_CONFIG_BLOCK *ConfigPtr
+  );
+
+AGESA_STATUS
 NbMidPostInit (
   IN  OUT AMD_NB_CONFIG       *NbConfigPtr
   );
 
 AGESA_STATUS
 AmdLatePostInit (
+  IN  OUT AMD_NB_CONFIG_BLOCK *ConfigPtr
+  );
+
+AGESA_STATUS
+AmdLatePostInitIommuAcpi (
   IN  OUT AMD_NB_CONFIG_BLOCK *ConfigPtr
   );
 

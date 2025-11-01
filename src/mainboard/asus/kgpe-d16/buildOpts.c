@@ -93,7 +93,7 @@
 
 #define BLDCFG_AMD_PLATFORM_TYPE                  AMD_PLATFORM_SERVER
 
-#define BLDCFG_MEMORY_BUS_FREQUENCY_LIMIT         DDR1866_FREQUENCY
+#define BLDCFG_MEMORY_BUS_FREQUENCY_LIMIT         DDR1600_FREQUENCY
 #define BLDCFG_MEMORY_MODE_UNGANGED               TRUE
 #define BLDCFG_MEMORY_QUAD_RANK_CAPABLE           TRUE
 #define BLDCFG_MEMORY_QUADRANK_TYPE               QUADRANK_REGISTERED
@@ -109,7 +109,7 @@
 #define BLDCFG_ONLINE_SPARE                       FALSE
 #define BLDCFG_BANK_SWIZZLE                       TRUE
 #define BLDCFG_TIMING_MODE_SELECT                 TIMING_MODE_AUTO
-#define BLDCFG_MEMORY_CLOCK_SELECT                DDR1866_FREQUENCY
+#define BLDCFG_MEMORY_CLOCK_SELECT                DDR1600_FREQUENCY
 #define BLDCFG_DQS_TRAINING_CONTROL               TRUE
 #define BLDCFG_IGNORE_SPD_CHECKSUM                FALSE
 #define BLDCFG_USE_BURST_MODE                     FALSE
@@ -141,7 +141,17 @@
 //
 
 // Select the platform control flow mode for performance tuning.
+// 	Nfcm, Normal Flow Control Mode
+// 	UmaDr, UMA using Display Refresh flow control
+// 	UmaIfcm, UMA using Isochronous Flow Control
+// 	Ifcm, Isochronous Flow Control Mode (other than for UMA)
+// 	Iommu, An IOMMU is in use in the system
+#if CONFIG(NORTHBRIDGE_AMD_CIMX_RD890_IOMMU)
+#define BLDCFG_IOMMU_SUPPORT TRUE
+#define BLDCFG_PLATFORM_CONTROL_FLOW_MODE Iommu
+#else
 #define BLDCFG_PLATFORM_CONTROL_FLOW_MODE Nfcm
+#endif
 
 /**
  * Enable the probe filtering performance tuning feature.

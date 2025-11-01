@@ -21,19 +21,13 @@
 /**
  * Max number of northbridges in the system
  */
-#define MAX_NB_COUNT		1 //TODO: only 1 NB tested
+#define MAX_NB_COUNT		1
 
 /**
  *  Enable check for PCIe endpoint to be ready for PCI enumeration.
  *
  */
 //#define EPREADY_WORKAROUND_DISABLED
-
-/**
- *  Enable IOMMU support. Initialize IOMMU subsystem, generate IVRS ACPI table.
- *
- */
-#define IOMMU_SUPPORT_DISABLE //TODO: enable it
 
 /**
  *  Disable server PCIe hotplug support.

@@ -29,4 +29,8 @@ config REDIRECT_NBCIMX_TRACE_TO_SERIAL
 
 	  Warning: Only enable this option when debuging or tracing AMD CIMX code.
 
+config NORTHBRIDGE_AMD_CIMX_RD890_IOMMU
+	bool "Enable IOMMU"
+	default y
+
 endif # NORTHBRIDGE_AMD_CIMX_RD890
