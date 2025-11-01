@@ -170,7 +170,13 @@ payloads/external/FILO/filo/build/version.h: filo
 
 # Grub
 
-grub2: $(obj)/config.h
+ifeq ($(CONFIG_GRUB2_SECONDARY_PAYLOAD),y)
+CONFIG_GRUB2_STABLE=$(CONFIG_GRUB2_SECONDARY_STABLE)
+CONFIG_GRUB2_MASTER=$(CONFIG_GRUB2_SECONDARY_MASTER)
+CONFIG_GRUB2_REVISION=$(CONFIG_GRUB2_SECONDARY_REVISION)
+endif
+
+grub2-coreboot: $(obj)/config.h
 	$(MAKE) -C payloads/external/GRUB2 \
 			HOSTCC="$(HOSTCC)" \
 			CC="$(CC_x86_32)" LD="$(LD_x86_32)" \
@@ -180,9 +186,37 @@ grub2: $(obj)/config.h
 			CONFIG_GRUB2_MASTER=$(CONFIG_GRUB2_MASTER) \
 			CONFIG_GRUB2_REVISION=$(CONFIG_GRUB2_REVISION) \
 			CONFIG_GRUB2_REVISION_ID=$(CONFIG_GRUB2_REVISION_ID) \
-			CONFIG_GRUB2_EXTRA_MODULES=$(CONFIG_GRUB2_EXTRA_MODULES)
+			CONFIG_GRUB2_EXTRA_MODULES=$(CONFIG_GRUB2_EXTRA_MODULES) \
+			PLATFORM=coreboot grub2-coreboot
 
-payloads/external/GRUB2/grub2/build/default_payload.elf: grub2
+grub2-floppy: $(obj)/config.h
+	$(MAKE) -C payloads/external/GRUB2 \
+			HOSTCC="$(HOSTCC)" \
+			CC="$(CC_x86_32)" LD="$(LD_x86_32)" \
+			OBJCOPY="$(OBJCOPY_x86_32)" STRIP="$(STRIP_x86_32)" \
+			CONFIG_DEP="$(abspath $(obj)/config.h)" \
+			CONFIG_GRUB2_STABLE=$(CONFIG_GRUB2_STABLE) \
+			CONFIG_GRUB2_MASTER=$(CONFIG_GRUB2_MASTER) \
+			CONFIG_GRUB2_REVISION=$(CONFIG_GRUB2_REVISION) \
+			CONFIG_GRUB2_REVISION_ID=$(CONFIG_GRUB2_REVISION_ID) \
+			CONFIG_GRUB2_MODULES=$(CONFIG_GRUB2_MODULES) \
+			CONFIG_GRUB2_FLOPPY_FDROOT=$(shell realpath $(CONFIG_GRUB2_FLOPPY_FDROOT)) \
+			PLATFORM=pc grub2-floppy
+
+payloads/external/GRUB2/grub2/build/default_payload.elf: grub2-coreboot
+payloads/external/GRUB2/grub2/build/floppy.img: grub2-floppy
+
+ifeq ($(CONFIG_GRUB2_FLOPPY),y)
+cbfs-files-$(CONFIG_GRUB2_SECONDARY_PAYLOAD) += floppyimg/grub.lzma
+floppyimg/grub.lzma-file := payloads/external/GRUB2/grub2/build/floppy.img
+floppyimg/grub.lzma-type := raw
+floppyimg/grub.lzma-compression := LZMA
+else
+cbfs-files-$(CONFIG_GRUB2_SECONDARY_PAYLOAD) += img/grub
+img/grub-file := payloads/external/GRUB2/grub2/build/default_payload.elf
+img/grub-type := payload
+img/grub-compression := $(CBFS_SECONDARY_PAYLOAD_COMPRESS_FLAG)
+endif
 
 # U-Boot
 

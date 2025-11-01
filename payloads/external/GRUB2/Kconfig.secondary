@@ -1,20 +1,20 @@
-if PAYLOAD_GRUB2
+if GRUB2_SECONDARY_PAYLOAD
 
 choice
 	prompt "GRUB2 version"
-	default GRUB2_STABLE
+	default GRUB2_SECONDARY_STABLE
 
-config GRUB2_STABLE
+config GRUB2_SECONDARY_STABLE
 	bool "2.02"
 	help
 	  Stable GRUB2 version
 
-config GRUB2_MASTER
+config GRUB2_SECONDARY_MASTER
 	bool "HEAD"
 	help
 	  Newest GRUB2 version
 
-config GRUB2_REVISION
+config GRUB2_SECONDARY_REVISION
 	bool "git revision"
 	help
 	  Select this option if you have a specific commit or branch
@@ -25,8 +25,10 @@ config GRUB2_REVISION
 	  later.
 endchoice
 
-config PAYLOAD_FILE
-	default "payloads/external/GRUB2/grub2/build/default_payload.elf"
+config GRUB2_FLOPPY
+	bool "Add GRUB2 as a SeaBIOS Floppy image"
+	depends on PAYLOAD_SEABIOS
+	default y
 
 source "payloads/external/GRUB2/Kconfig.common"
 

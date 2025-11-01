@@ -39,10 +39,10 @@ payloads/external/LinuxBoot \
 payloads/external/Yabits \
 
 payloads/coreinfo/build/coreinfo.elf coreinfo:
-	$(MAKE) -C payloads/coreinfo defaultbuild
+	$(MAKE) -C payloads/coreinfo defaultbuild HOSTCC=$(HOSTCC) HOSTCXX=$(HOSTCXX)
 
 payloads/nvramcui/nvramcui.elf nvramcui:
-	$(MAKE) -C payloads/nvramcui
+	$(MAKE) -C payloads/nvramcui HOSTCC=$(HOSTCC) HOSTCXX=$(HOSTCXX)
 
 clean-payloads:
 	$(foreach payload, $(PAYLOADS_LIST), $(MAKE) -C $(payload) clean; )
