@@ -46,11 +46,10 @@ static void sb700_enable_rom(void)
 	dword |= (1<<0) | (1<<1) | (1<<4) | (1<<6) | (1<<21);
 	pci_io_write_config32(dev, 0x48, dword);
 
-	/* Enable 4MB ROM access at 0xFFE00000 - 0xFFFFFFFF */
-	/* Set the 4MB enable bits */
-	word = pci_io_read_config16(dev, 0x6c);
-	word = 0xFFC0;
-	pci_io_write_config16(dev, 0x6c, word);
+	/* LPC ROM Address Range 2 (Start Address) */
+	pci_io_write_config16(dev, 0x6c, 0x10000 - (CONFIG_COREBOOT_ROMSIZE_KB >> 6));
+	/* LPC ROM Address Range 2 (End Address) */
+	pci_io_write_config16(dev, 0x6e, 0xffff);
 }
 
 static void bootblock_southbridge_init(void)
