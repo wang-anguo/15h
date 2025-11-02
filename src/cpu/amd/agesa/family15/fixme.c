@@ -119,13 +119,13 @@ void amd_initcpuio(void)
 		 * Just have all mmio set to non-posted,
 		 * coreboot not implemente the range by range setting yet.
 		 */
-		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0xBC);
+		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0xBC); // MMIO Limit Low, Range 7
 		PciData = CONFIG_MMCONF_BASE_ADDRESS + (CONFIG_MMCONF_BUS_NUMBER * 0x100000) - 1;//1MB each bus
 		PciData = (PciData >> 8) & 0xFFFFFF00;
 		PciData |= 0x80; //NP
 		PciData |= sblink << 4;
 		LibAmdPciWrite(AccessWidth32, PciAddress, &PciData, &StdHeader);
-		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0xB8);
+		PciAddress.AddressValue = MAKE_SBDFO(0, 0, CONFIG_CDB + node, FUNC_1, 0xB8); // MMIO Base Low, Range 7
 		PciData = (CONFIG_MMCONF_BASE_ADDRESS >> 8) | 0x03;
 		LibAmdPciWrite(AccessWidth32, PciAddress, &PciData, &StdHeader);
 
