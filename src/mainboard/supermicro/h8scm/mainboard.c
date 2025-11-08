@@ -15,51 +15,9 @@
 
 #include <console/console.h>
 #include <device/device.h>
-#include <device/pci.h>
-#include <arch/io.h>
-#include <boot/tables.h>
-#include <device/pci_def.h>
-#include <NbPlatform.h>
-#include "chip.h"
-
-void set_pcie_dereset(void *nbconfig);
-void set_pcie_reset(void *nbconfig);
-
-/**
- *
- */
-void set_pcie_reset(void *nbconfig)
-{
-}
-
-/**
- * Mainboard specific RD890 CIMx callback
- * Release Resets to PCIe Links
- * For Both SR56X0 chips, PCIE_RESET_GPIO1 to reset pcie
- */
-void set_pcie_dereset(void *nbconfig)
-{
-	//u32 nb_dev = MAKE_SBDFO(0, 0x0, 0x0, 0x0, 0x0);
-	u32 i;
-	u32 val;
-	u32 nb_addr;
-
-	val = 0x00000007UL;
-	AMD_NB_CONFIG_BLOCK *pConfig = (AMD_NB_CONFIG_BLOCK*)nbconfig;
-	for (i = 0; i < MAX_NB_COUNT; i ++) {
-		nb_addr = pConfig->Northbridges[i].NbPciAddress.AddressValue | NB_HTIU_INDEX;
-		LibNbPciIndexRMW(nb_addr,
-				NB_HTIU_REGA8,
-				AccessS3SaveWidth32,
-				~val,
-				val,
-				 &(pConfig->Northbridges[i]));
-	}
-}
-
 
 /*************************************************
- * enable the dedicated function in h8scm board.
+ * enable the dedicated function in mainboard.
  *************************************************/
 static void mainboard_enable(struct device *dev)
 {

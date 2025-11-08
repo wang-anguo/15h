@@ -21,6 +21,7 @@
  */
 struct northbridge_amd_cimx_rd890_config
 {
+	u8 index;
 	u8 gpp1_configuration;
 	u8 gpp2_configuration;
 	u8 gpp3a_configuration;

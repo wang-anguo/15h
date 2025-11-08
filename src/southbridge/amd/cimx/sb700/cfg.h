@@ -13,17 +13,16 @@
  * GNU General Public License for more details.
  */
 
-#include <console/console.h>
-#include <device/device.h>
 
-/*************************************************
- * enable the dedicated function in mainboard.
- *************************************************/
-static void mainboard_enable(struct device *dev)
-{
-	printk(BIOS_INFO, "Mainboard " CONFIG_MAINBOARD_PART_NUMBER " Enable.\n");
-}
+#ifndef _SB700_CFG_H_
+#define _SB700_CFG_H_
 
-struct chip_operations mainboard_ops = {
-		.enable_dev = mainboard_enable,
-};
+#include <stdint.h>
+
+/**
+ * @brief South Bridge CIMx configuration
+ *
+ */
+void sb700_cimx_config(AMDSBCFG *sb_cfg);
+
+#endif //_SB700_CFG_H_

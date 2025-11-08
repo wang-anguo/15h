@@ -220,16 +220,14 @@ AmdInitEarly (
     EarlyInitStatus = CalledAgesaStatus;
   }
 
-  IDS_HDT_CONSOLE_DEBUG_CODE (
-    {
-      extern CHAR8 *BldOptDebugOutput[];
-
-      UINT8 i;
-      for (i = 0; BldOptDebugOutput[i] != NULL; i++) {
-        IDS_HDT_CONSOLE (MAIN_FLOW, "\t%s\n", BldOptDebugOutput[i]);
-      }
+  #if IDS_TRACE_SHOW_BLD_OPT_CFG == TRUE
+    extern CHAR8 *BldOptDebugOutput[];
+    UINT8 i;
+    IDS_HDT_CONSOLE (MAIN_FLOW, "User Build Options:\n");
+    for (i = 0; BldOptDebugOutput[i] != NULL; i++) {
+      IDS_HDT_CONSOLE (MAIN_FLOW, "%s\n", BldOptDebugOutput[i]);
     }
-  )
+  #endif
 
   //
   // WARNING: AGESA's own IDT is at heap which would be moved from one place to another

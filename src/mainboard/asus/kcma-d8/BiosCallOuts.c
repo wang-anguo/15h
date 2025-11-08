@@ -45,7 +45,7 @@ static AGESA_STATUS read_spd_buffer(UINT32 unused1, UINTN unused2, AGESA_READ_SP
 	 * Channel range: 0-3 (4)
 	 * Dimm range: 0-1 (2)
 	*/
-	printk(BIOS_DEBUG, "read_spd_buffer: Socket %d, Channel %d, Dimm %d\n", info->SocketId, info->MemChannelId, info->DimmId);
+	printk(BIOS_INFO, "SPD: Socket %d, Channel %d, Dimm %d\n", info->SocketId, info->MemChannelId, info->DimmId);
 
 	if(info->SocketId > 1) return AGESA_ERROR;
 	if(info->MemChannelId > 3) return AGESA_ERROR;

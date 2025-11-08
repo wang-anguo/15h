@@ -211,20 +211,25 @@ MemFInitECC (
       NBPtr->SetBitField (NBPtr, BFScrubAddrLoReg, ScrubAddrRJ16 << 16);
       NBPtr->SetBitField (NBPtr, BFScrubAddrHiReg, ScrubAddrRJ16 >> 16);
       NBPtr->SetBitField (NBPtr, BFDramScrub, ecc_override_struct.CfgScrubDramRate);
+      IDS_HDT_CONSOLE (MEM_FLOW, "%s: ScrubDramRate = 0x%02X\n", __func__, ecc_override_struct.CfgScrubDramRate);
     }
   }
   // Scrub CTL for Dcache, L2, L3
   // Check if the input L2 scrub rate is supported or not
   ASSERT (ecc_override_struct.CfgScrubL2Rate <= 0x16);
   NBPtr->SetBitField (NBPtr, BFL2Scrub, ecc_override_struct.CfgScrubL2Rate);
+  IDS_HDT_CONSOLE (MEM_FLOW, "%s: ScrubL2Rate = 0x%02X\n", __func__, ecc_override_struct.CfgScrubL2Rate);
   // Check if the input Dcache scrub rate is supported or not
   ASSERT (ecc_override_struct.CfgScrubDcRate <= 0x16);
   NBPtr->SetBitField (NBPtr, BFDcacheScrub, ecc_override_struct.CfgScrubDcRate);
+  IDS_HDT_CONSOLE (MEM_FLOW, "%s: ScrubDcRate = 0x%02X\n", __func__, ecc_override_struct.CfgScrubDcRate);
+
   // Do not enable L3 Scrub if F3xE8[L3Capable] is 0 or F3x188[BFReserved00B] is 1
   if ((NBPtr->GetBitField (NBPtr, BFL3Capable) == 1) && (NBPtr->GetBitField (NBPtr, BFReserved00B) == 0)) {
     // Check if input L3 scrub rate is supported or not
     ASSERT (ecc_override_struct.CfgScrubL3Rate <= 0x16);
     NBPtr->SetBitField (NBPtr, BFL3Scrub, ecc_override_struct.CfgScrubL3Rate);
+    IDS_HDT_CONSOLE (MEM_FLOW, "%s: ScrubL3Rate = 0x%02X\n", __func__, ecc_override_struct.CfgScrubL3Rate);
   }
 
   // Check if Dcache scrubber or L2 scrubber is enabled
@@ -270,18 +275,27 @@ InitECCOverriedeStruct (
   if (UserOptions.CfgScrubDramRate != 0xFF) {
     pecc_override_struct->CfgScrubDramRate = UserOptions.CfgScrubDramRate;
   } else {
-    if (NBPtr->MCTPtr->NodeMemSize <= 0x4000) {
-      pecc_override_struct->CfgScrubDramRate = 0x12; // 1 ~ 1 GB
-    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x8000) {
-      pecc_override_struct->CfgScrubDramRate = 0x11; // 1 GB + 1 ~ 2 GB
-    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x10000) {
-      pecc_override_struct->CfgScrubDramRate = 0x10; // 2 GB + 1 ~ 4 GB
-    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x20000) {
-      pecc_override_struct->CfgScrubDramRate = 0x0F; // 4 GB + 1 ~ 8 GB
-    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x40000) {
-      pecc_override_struct->CfgScrubDramRate = 0x0E; // 8 GB + 1 ~ 16 GB
-    } else {
-      pecc_override_struct->CfgScrubDramRate = 0x0D; //16 GB + 1 above
+    IDS_HDT_CONSOLE (MEM_FLOW, "%s: NodeMemSize = 0x%08X\n", __func__, NBPtr->MCTPtr->NodeMemSize);
+    if (NBPtr->MCTPtr->NodeMemSize <= 0x4000) { // 1 ~ 1 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_5MS;
+    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x8000) { // 1 GB + 1 ~ 2 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_3MS;
+    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x10000) { // 2 GB + 1 ~ 4 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_1MS;
+    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x20000) { // 4 GB + 1 ~ 8 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_655US;
+    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x40000) { // 8 GB + 1 ~ 16 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_328US;
+    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x80000) { // 16 GB + 1 ~ 32 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_164US;
+    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x100000) { // 32 GB + 1 ~ 64 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_82US;
+    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x200000) { // 64 GB + 1 ~ 128 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_41US;
+    } else if (NBPtr->MCTPtr->NodeMemSize <= 0x400000) { // 128 GB + 1 ~ 256 GB
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_21US;
+    } else { //256 GB + 1 ~ Any
+      pecc_override_struct->CfgScrubDramRate = ECCSCRUBRATE_10US;
     }
   }
 

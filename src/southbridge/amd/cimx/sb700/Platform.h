@@ -39,38 +39,24 @@ typedef union _PCI_ADDR{
 	EXT_PCI_ADDR            Addr;
 }PCI_ADDR;
 
-
-#ifdef CIM_DEBUG
-
-#if   CIM_DEBUG & 2
-void    TraceDebug( UINT32 Level, CHAR8 *Format, ...);
-#define TRACE(Arguments) TraceDebug Arguments
-#else
-#define TRACE(Arguments)
+#ifdef TRACE
+#undef TRACE
 #endif
 
-#if   CIM_DEBUG & 1
-void    TraceCode ( UINT32 Level, UINT32 Code);
-#define TRACECODE(Arguments) TraceCode Arguments
-#else
-#define TRACECODE(Arguments)
-#endif
-#else
-	#ifdef TRACE
-		#undef TRACE
+#if CONFIG(ENABLE_SB_CIMX_DEBUGGER)
+	#define TRACE(Arguments) printk Arguments
+	#if CONFIG(CONSOLE_USB)
+		#define DISABLE_USB_RESET
 	#endif
-	#if CONFIG(REDIRECT_SBCIMX_TRACE_TO_SERIAL)
-		#define TRACE(Arguments) printk Arguments
-	#else
-		#define TRACE(Arguments) do {} while (0)
-	#endif
-	#define TRACECODE(Arguments)
+#else
+	#define TRACE(Arguments) do {} while (0)
 #endif
 
 #define FIXUP_PTR(ptr)  ptr
 
 #pragma pack(pop)
 
+#include "platform_cfg.h"       /* mainboard specific configuration */
 #include "OEM.h"
 #include "Amd.h"
 #include "ACPILIB.h"

@@ -13,11 +13,11 @@
  * GNU General Public License for more details.
  */
 
+#include "Platform.h"
+#include "cfg.h"
 
 #include <string.h>
-#include <console/console.h>    /* printk */
-#include "Platform.h"
-#include "sb700_cfg.h"
+#include <console/console.h>
 
 
 /**
@@ -29,9 +29,10 @@
 void sb700_cimx_config(AMDSBCFG *sb_config)
 {
 	if (!sb_config) {
-		printk(BIOS_DEBUG, "SB700 - Cfg.c - sb700_cimx_config - No sb_config.\n");
+		printk(BIOS_ERR, "SB700 - Cfg.c - sb700_cimx_config - No sb_config.\n");
 		return;
 	}
+
 	printk(BIOS_DEBUG, "SB700 - Cfg.c - sb700_cimx_config - Start.\n");
 	memset(sb_config, 0, sizeof(AMDSBCFG));
 
@@ -81,8 +82,8 @@ void sb700_cimx_config(AMDSBCFG *sb_config)
 	/* General */
 	sb_config->Spi33Mhz = 1;
 	sb_config->SpreadSpectrum = 0;
-	sb_config->PciClk5 = 1;
-	sb_config->PciClks = 0x1F;
+	sb_config->PciClks = PCI_CLOCK_CTRL;
+	sb_config->PciClk5 = PCI_CLOCK_CTRL_5;
 	sb_config->ResetCpuOnSyncFlood = 1; // Do not reset CPU on sync flood
 	sb_config->TimerClockSource = 2;  // Auto
 	sb_config->S3Resume = 0;
@@ -122,19 +123,11 @@ void sb700_cimx_config(AMDSBCFG *sb_config)
 	/* Azalia HDA */
 	sb_config->AzaliaController = AZALIA_CONTROLLER;
 	sb_config->AzaliaPinCfg = AZALIA_PIN_CONFIG;
-	sb_config->AzaliaSdin0 = AZALIA_SDIN_PIN_0;
-	sb_config->AzaliaSdin1 = AZALIA_SDIN_PIN_1;
-	sb_config->AzaliaSdin2 = AZALIA_SDIN_PIN_2;
-	sb_config->AzaliaSdin3 = AZALIA_SDIN_PIN_3;
+	sb_config->AzaliaSdin0 = AZALIA_SDIN_PIN & 0x03;
+	sb_config->AzaliaSdin1 = (AZALIA_SDIN_PIN >> 2) & 0x03;
+	sb_config->AzaliaSdin2 = (AZALIA_SDIN_PIN >> 4) & 0x03;
+	sb_config->AzaliaSdin3 = (AZALIA_SDIN_PIN >> 6) & 0x03;
 	sb_config->pAzaliaOemCodecTablePtr = NULL;
 
-#ifndef __PRE_RAM__
-	/* ramstage cimx config here */
-	if (!sb_config->StdHeader.pCallBack) {
-		sb_config->StdHeader.pCallBack = sb700_callout_entry;
-	}
-
-	//sb_config->
-#endif //!__PRE_RAM__
 	printk(BIOS_DEBUG, "SB700 - Cfg.c - sb700_cimx_config - End.\n");
 }

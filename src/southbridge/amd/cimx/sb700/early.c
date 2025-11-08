@@ -14,12 +14,12 @@
  */
 
 #include <stdint.h>
+#include "Platform.h"
+#include "sb_cimx.h"
+#include "cfg.h"
 #include <device/pci_ids.h>
 #include <device/pci_ops.h>
 #include <arch/io.h>
-#include "Platform.h"
-#include "sb_cimx.h"
-#include "sb700_cfg.h"                /*sb700_cimx_config*/
 #include <console/console.h>
 #include <commonlib/loglevel.h>
 #include "smbus.h"

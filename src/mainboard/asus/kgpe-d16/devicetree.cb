@@ -24,10 +24,11 @@ chip northbridge/amd/agesa/family15/root_complex	# Root complex
 					device pci b.0 on end			# Bridge (GPP2 Port0), PCI E 4, x8
 					device pci c.0 on end			# Bridge (GPP2 Port1), PCI E 5, x8
 					device pci d.0 on end			# Bridge (GPP3b Port0), PCI E 3, x4 in x8
+					register "index" = "0"			# Northbridge Number
 					register "gpp1_configuration" = "0"	# Configuration 16:0 default
 					register "gpp2_configuration" = "1"	# Configuration 8:8
 					register "gpp3a_configuration" = "2"	# Configuration 4:1:1:0:0:0
-					register "port_enable" = "0x3E14"	# 0b11111000010100
+					register "port_enable" = "0x3E14"       # 0b11111000010100
 				end
 				chip southbridge/amd/cimx/sb700		# Secondary southbridge
 					device pci 11.0 on end			# SATA

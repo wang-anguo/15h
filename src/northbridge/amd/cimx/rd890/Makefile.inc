@@ -15,6 +15,6 @@
 
 
 # RD890 Platform Files
-romstage-y += early.c
+romstage-y += early.c cfg.c
 
-ramstage-y += late.c
+ramstage-y += late.c cfg.c

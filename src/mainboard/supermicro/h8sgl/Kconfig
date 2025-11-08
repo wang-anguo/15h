@@ -46,11 +46,7 @@ config HW_MEM_HOLE_SIZEK
 
 config MAX_CPUS
 	int
-	default 32
-
-config HW_MEM_HOLE_SIZE_AUTO_INC
-	bool
-	default n
+	default 16
 
 config IRQ_SLOT_COUNT
 	int
@@ -62,7 +58,7 @@ config ONBOARD_VGA_IS_PRIMARY
 
 config VGA_BIOS
 	bool
-	default n
+	default y
 
 config VGA_BIOS_ID
 	string

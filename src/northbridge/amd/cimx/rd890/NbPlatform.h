@@ -16,54 +16,34 @@
 #ifndef _NB_PLATFORM_H_
 #define _NB_PLATFORM_H_
 
-#define SERIAL_OUT_SUPPORT //enable serial output
-#define CIMX_DEBUG
-
-#ifdef  CIMX_DEBUG
-#define CIMX_TRACE_SUPPORT
-#define CIMX_ASSERT_SUPPORT
+#if CONFIG(ENABLE_NB_CIMX_DEBUGGER)
+	#define CIMX_TRACE_SUPPORT
+	#define CIMX_ASSERT_SUPPORT
 #endif
 
+#define CIMX_INIT_TRACE(Arguments)
+
 #ifdef  CIMX_TRACE_SUPPORT
-	#define CIMX_INIT_TRACE(Arguments)
-	#if CONFIG(REDIRECT_NBCIMX_TRACE_TO_SERIAL)
-		#define TRACE_DATA(Ptr, Level) BIOS_DEBUG //always enable
-		#define CIMX_TRACE(Argument) do {do_printk Argument;} while (0)
-	#else
-		#define TRACE_DATA(Ptr, Level)
-		#define CIMX_TRACE(Argument)
-	#endif
+	#define TRACE_DATA(Ptr, Level) BIOS_DEBUG //always enable
+	#define CIMX_TRACE(Argument) do {do_printk Argument;} while (0)
 #else
 	#define CIMX_TRACE(Argument)
-	#define CIMX_INIT_TRACE(Arguments)
 #endif
 
 #ifdef CIMX_ASSERT_SUPPORT
-	#ifdef ASSERT
-		#undef ASSERT
-		#define ASSERT CIMX_ASSERT
-	#endif
-	#ifdef CIMX_TRACE_SUPPORT
-		#define CIMX_ASSERT(x)  if (!(x)) {\
-			LibAmdTraceDebug (CIMX_TRACE_ALL, (CHAR8 *)"ASSERT !!! "__FILE__" - line %d\n", __LINE__); \
-			/*__asm {jmp $}; */\
-		}
-	//#define IDS_HDT_CONSOLE(s, args...) do_printk(BIOS_DEBUG, s, ##args)
-	#else
-		#define CIMX_ASSERT(x) if (!(x)) {\
-			/*__asm {jmp $}; */\
-		}
-	#endif
+	#define CIMX_ASSERT(x)  if (!(x)) {\
+		printk(BIOS_ERR, "ASSERT !!! %s:%d\n", __FILE__, __LINE__); \
+	}
 #else
 	#define CIMX_ASSERT(x)
 #endif
+
 
 /*----------------------------------------------------------------------------------------
  *                          E X P O R T E D    F U N C T I O N S
  *----------------------------------------------------------------------------------------
  */
 
-//#define STALL(Ptr, TimeUs, Flag) LibAmdSbStall(TimeUs)
 #define STALL(Ptr, TimeUs, Flag) LibAmdSbStall(TimeUs, Ptr)
 
 #define REPORT_EVENT(Class, Info, Param1, Param2, Param3, Param4, CfgPtr)

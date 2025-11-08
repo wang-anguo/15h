@@ -13,17 +13,16 @@
  * GNU General Public License for more details.
  */
 
-#include <console/console.h>
-#include <device/device.h>
 
-/*************************************************
- * enable the dedicated function in mainboard.
- *************************************************/
-static void mainboard_enable(struct device *dev)
-{
-	printk(BIOS_INFO, "Mainboard " CONFIG_MAINBOARD_PART_NUMBER " Enable.\n");
-}
+#ifndef _RD890_CFG_H_
+#define _RD890_CFG_H_
 
-struct chip_operations mainboard_ops = {
-		.enable_dev = mainboard_enable,
-};
+#include <stdint.h>
+
+/**
+ * @brief North Bridge CIMx configuration
+ *
+ */
+void rd890_cimx_config(AMD_NB_CONFIG_BLOCK **pConfigPtr, NB_CONFIG *nbConfig, HT_CONFIG *htConfig, PCIE_CONFIG *pcieConfig);
+
+#endif //_RD890_CFG_H_

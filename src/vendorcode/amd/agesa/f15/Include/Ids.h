@@ -532,18 +532,6 @@ typedef enum {                        //vv- for debug reference only
 
     #ifndef __GNUC__
       #pragma warning(disable: 4127)
-      #define IDS_HDT_CONSOLE(f, s, ...)
-    #else
-      //#define IDS_HDT_CONSOLE(f, s, ...) printk (BIOS_DEBUG, s, ##__VA_ARGS__);
-      #define IDS_HDT_CONSOLE(f, s, ...) do {\
-		if (f == MEM_GETREG) {\
-			printk (BIOS_SPEW, s, ##__VA_ARGS__);\
-		} else if (f == MEM_SETREG) {\
-			printk (BIOS_SPEW, s, ##__VA_ARGS__);\
-		} else { \
-			printk (BIOS_DEBUG, s, ##__VA_ARGS__);\
-		}\
-	} while(0)
     #endif
 
     #define IDS_HDT_CONSOLE_FLUSH_BUFFER(x)
@@ -552,7 +540,6 @@ typedef enum {                        //vv- for debug reference only
     #define IDS_FUNCLIST_EXTERN()
     #define IDS_TIMEOUT_CTL(t)
     #define IDS_HDT_CONSOLE_DEBUG_CODE(Code)
-    //#define CONSOLE(s, ...)
   #else
     #define IDS_HDT_CONSOLE_INIT(x)
     #define IDS_HDT_CONSOLE_EXIT(x)
@@ -565,7 +552,6 @@ typedef enum {                        //vv- for debug reference only
     #define IDS_FUNCLIST_EXTERN()
     #define IDS_TIMEOUT_CTL(t)
     #define IDS_HDT_CONSOLE_DEBUG_CODE(Code)
-    //#define CONSOLE(s, ...)        CONSOLE_Needs_To_Be_Removed_For_Production_Build //"WARNING: CONSOLE needs to be removed for production builds."
   #endif
 #else
   #define IDS_HDT_CONSOLE_INIT(x)

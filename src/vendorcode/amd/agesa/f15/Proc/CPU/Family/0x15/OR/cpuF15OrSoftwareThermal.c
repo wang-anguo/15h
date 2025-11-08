@@ -116,6 +116,7 @@ F15OrPmThermalInit (
     LibAmdPciRead (AccessWidth32, PciAddress, &LocalPciRegister, StdHeader);
     if (((NB_CAPS_REGISTER *) &LocalPciRegister)->HtcCapable == 1) {
       // Enable HTC
+      IDS_HDT_CONSOLE (MAIN_FLOW, "%s: Enable Hardware Thermal Control\n", __func__);
       PciAddress.Address.Register = HTC_REG;
       LibAmdPciRead (AccessWidth32, PciAddress, &LocalPciRegister, StdHeader);
       ((HTC_REGISTER *) &LocalPciRegister)->HtcSlewSel = 0;

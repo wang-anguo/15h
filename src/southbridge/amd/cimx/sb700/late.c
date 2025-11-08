@@ -26,10 +26,10 @@
 #include <device/pci_ehci.h>
 #include <arch/acpi.h>
 #include "lpc.h"                /* lpc_read_resources */
-#include "Platform.h"   /* Platform Specific Definitions */
-#include "sb_cimx.h"
-#include "sb700_cfg.h"                /* sb700 Cimx configuration */
+#include "Platform.h"		/* Platform Specific Definitions */
+#include "cfg.h"                /* sb700 CIMx configuration */
 #include "chip.h"               /* struct southbridge_amd_cimx_sb700_config */
+#include "sb_cimx.h"		/* AMD CIMx wrapper entries */
 
 static AMDSBCFG sb_late_cfg; //global, init in sb700_cimx_config
 static AMDSBCFG *sb_config = &sb_late_cfg;
@@ -44,7 +44,7 @@ static AMDSBCFG *sb_config = &sb_late_cfg;
  * @param[in] config    Southbridge configuration structure pointer.
  *
  */
-u32 sb700_callout_entry(u32 func, u32 data, void* config)
+static u32 sb700_callout_entry(u32 func, u32 data, void* config)
 {
 	u32 ret = 0;
 
@@ -203,7 +203,6 @@ static void sb700_enable(struct device *dev)
 	printk(BIOS_DEBUG, "%s\n", __func__);
 	switch (dev->path.pci.devfn) {
 		case (0x11 << 3) | 0: /* 0:11.0  SATA */
-			sb700_cimx_config(sb_config);
 			if (dev->enabled) {
 				sb_config->SataController = CIMX_OPTION_ENABLED;
 				if (1 == sb_chip->boot_switch_sata_ide)
@@ -258,6 +257,8 @@ static void sb700_enable(struct device *dev)
 			break;
 
 		case (0x14 << 3) | 5: /* 0:14:5 OHCI-USB4 */
+			/* FIXME: Not part of DF 14.5, but these need to execute last */
+
 			//sb_config->StdHeader.Func = SB_BEFORE_PCI_INIT;
 			//AmdSbDispatcher(sb_config);
 			sbBeforePciInit(sb_config);
@@ -276,7 +277,15 @@ static void sb700_enable(struct device *dev)
 	}
 }
 
+static void sb700_init(void *chip_info)
+{
+	printk(BIOS_DEBUG, "SB700: %s\n", __func__);
+	sb_config->StdHeader.pCallBack = sb700_callout_entry;
+	sb700_cimx_config(sb_config);
+}
+
 struct chip_operations southbridge_amd_cimx_sb700_ops = {
 	CHIP_NAME("ATI SB700")
+	.init = sb700_init,
 	.enable_dev = sb700_enable,
 };

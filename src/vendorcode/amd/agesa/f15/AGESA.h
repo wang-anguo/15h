@@ -1246,6 +1246,31 @@ typedef UINT8 PSO_TABLE;            ///< Platform Configuration Table
 #define ECCSYMBOLSIZE_USE_BKDG      0   ///< Use BKDG Recommended Value
 #define ECCSYMBOLSIZE_FORCE_X4      4   ///< Force to x4
 #define ECCSYMBOLSIZE_FORCE_X8      8   ///< Force to x8
+/// ECC Scrub Rates
+#define ECCSCRUBRATE_DISABLE        0x00
+#define ECCSCRUBRATE_40NS           0x01 // 40 ns
+#define ECCSCRUBRATE_80NS           0x02 // 80 ns
+#define ECCSCRUBRATE_160NS          0x03 // 160 ns
+#define ECCSCRUBRATE_320NS          0x04 // 320 ns
+#define ECCSCRUBRATE_640NS          0x05 // 640 ns
+#define ECCSCRUBRATE_1US            0x06 // 1.28 us
+#define ECCSCRUBRATE_3US            0x07 // 2.56 us
+#define ECCSCRUBRATE_5US            0x08 // 5.12 us
+#define ECCSCRUBRATE_10US           0x09 // 10.2 us
+#define ECCSCRUBRATE_21US           0x0A // 20.5 us
+#define ECCSCRUBRATE_41US           0x0B // 41.0 us
+#define ECCSCRUBRATE_82US           0x0C // 81.9 us
+#define ECCSCRUBRATE_164US          0x0D // 163.8 us
+#define ECCSCRUBRATE_328US          0x0E // 327.7 us
+#define ECCSCRUBRATE_655US          0x0F // 655.4 us
+#define ECCSCRUBRATE_1MS            0x10 // 1.31 ms
+#define ECCSCRUBRATE_3MS            0x11 // 2.62 ms
+#define ECCSCRUBRATE_5MS            0x12 // 5.24 ms
+#define ECCSCRUBRATE_10MS           0x13 // 10.49 ms
+#define ECCSCRUBRATE_21MS           0x14 // 20.97 ms
+#define ECCSCRUBRATE_42MS           0x15 // 42 ms
+#define ECCSCRUBRATE_84MS           0x16 // 84 ms
+#define ECCSCRUBRATE_AUTO           0xFF
 /// CPU Package Type
 #define PT_L1       0                 ///< L1 Package type
 #define PT_M2       1                 ///< AM Package type
@@ -1270,40 +1295,60 @@ typedef enum {
   DDR3_TECHNOLOGY       ///< DDR3 technology
 } TECHNOLOGY_TYPE;
 
+
 /// Build Configuration values for BLDCFG_MEMORY_BUS_FREQUENCY_LIMIT & BLDCFG_MEMORY_CLOCK_SELECT
+#define MEM_DDR400_FREQUENCY	200
+#define MEM_DDR533_FREQUENCY	266
+#define MEM_DDR667_FREQUENCY	333
+#define MEM_DDR800_FREQUENCY	400
+#define MEM_DDR1066_FREQUENCY	533
+#define MEM_DDR1333_FREQUENCY	667
+#define MEM_DDR1600_FREQUENCY	800
+#define MEM_DDR1866_FREQUENCY	933
+#define MEM_DDR2100_FREQUENCY	1050
+#define MEM_DDR2133_FREQUENCY	1066
+#define MEM_DDR2400_FREQUENCY	1200
 typedef enum {
-  DDR400_FREQUENCY = 200,     ///< DDR 400
-  DDR533_FREQUENCY = 266,     ///< DDR 533
-  DDR667_FREQUENCY = 333,     ///< DDR 667
-  DDR800_FREQUENCY = 400,     ///< DDR 800
-  DDR1066_FREQUENCY = 533,    ///< DDR 1066
-  DDR1333_FREQUENCY = 667,    ///< DDR 1333
-  DDR1600_FREQUENCY = 800,    ///< DDR 1600
-  DDR1866_FREQUENCY = 933,    ///< DDR 1866
-  DDR2100_FREQUENCY = 1050,   ///< DDR 2100
-  DDR2133_FREQUENCY = 1066,   ///< DDR 2133
-  DDR2400_FREQUENCY = 1200,   ///< DDR 2400
+  DDR400_FREQUENCY = MEM_DDR400_FREQUENCY,
+  DDR533_FREQUENCY = MEM_DDR533_FREQUENCY,
+  DDR667_FREQUENCY = MEM_DDR667_FREQUENCY,
+  DDR800_FREQUENCY = MEM_DDR800_FREQUENCY,
+  DDR1066_FREQUENCY = MEM_DDR1066_FREQUENCY,
+  DDR1333_FREQUENCY = MEM_DDR1333_FREQUENCY,
+  DDR1600_FREQUENCY = MEM_DDR1600_FREQUENCY,
+  DDR1866_FREQUENCY = MEM_DDR1866_FREQUENCY,
+  DDR2100_FREQUENCY = MEM_DDR2100_FREQUENCY,
+  DDR2133_FREQUENCY = MEM_DDR2133_FREQUENCY,
+  DDR2400_FREQUENCY = MEM_DDR2400_FREQUENCY,
   UNSUPPORTED_DDR_FREQUENCY   ///< Highest limit of DDR frequency
 } MEMORY_BUS_SPEED;
 
 /// Build Configuration values for BLDCFG_MEMORY_QUADRANK_TYPE
+#define MEM_QUADRANK_REGISTERED 0
+#define MEM_QUADRANK_UNBUFFERED 1
 typedef enum {
-  QUADRANK_REGISTERED,        ///< Quadrank registered DIMM
-  QUADRANK_UNBUFFERED         ///< Quadrank unbuffered DIMM
+  QUADRANK_REGISTERED = MEM_QUADRANK_REGISTERED,
+  QUADRANK_UNBUFFERED = MEM_QUADRANK_UNBUFFERED
 } QUANDRANK_TYPE;
 
 /// Build Configuration values for BLDCFG_TIMING_MODE_SELECT
+#define MEM_TIMING_MODE_AUTO		0
+#define MEM_TIMING_MODE_LIMITED		1
+#define MEM_TIMING_MODE_SPECIFIC	2
 typedef enum {
-  TIMING_MODE_AUTO,           ///< Use best rate possible
-  TIMING_MODE_LIMITED,        ///< Set user top limit
-  TIMING_MODE_SPECIFIC        ///< Set user specified speed
+  TIMING_MODE_AUTO = MEM_TIMING_MODE_AUTO,         ///< Use best rate possible
+  TIMING_MODE_LIMITED = MEM_TIMING_MODE_LIMITED,   ///< Set user top limit
+  TIMING_MODE_SPECIFIC = MEM_TIMING_MODE_SPECIFIC  ///< Set user specified speed
 } USER_MEMORY_TIMING_MODE;
 
 /// Build Configuration values for BLDCFG_POWER_DOWN_MODE
+#define MEM_POWER_DOWN_BY_CHANNEL	0
+#define MEM_POWER_DOWN_BY_CHIP_SELECT	1
+#define MEM_POWER_DOWN_MODE_AUTO	2
 typedef enum {
-  POWER_DOWN_BY_CHANNEL,      ///< Channel power down mode
-  POWER_DOWN_BY_CHIP_SELECT,  ///< Chip select power down mode
-  POWER_DOWN_MODE_AUTO        ///< AGESA to select power down mode
+  POWER_DOWN_BY_CHANNEL = MEM_POWER_DOWN_BY_CHANNEL,		///< Channel power down mode
+  POWER_DOWN_BY_CHIP_SELECT = MEM_POWER_DOWN_BY_CHIP_SELECT,	///< Chip select power down mode
+  POWER_DOWN_MODE_AUTO = MEM_POWER_DOWN_MODE_AUTO		///< AGESA to select power down mode
 } POWER_DOWN_MODE;
 
 /// Low voltage support

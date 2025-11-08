@@ -45,6 +45,7 @@
  *----------------------------------------------------------------------------------------
  */
 #include "AGESA.h"
+#include "NbPlatform.h"
 #include "amdAcpiLib.h"
 #include "amdAcpiIvrs.h"
 
@@ -179,7 +180,7 @@ LibAmdGetFirstDeviceEntry (
     } else if ((*EntryPtr >= 64) && (*EntryPtr < 128)) {
       EntryPtr += 8;
     } else {
-      ASSERT (TRUE);
+      CIMX_ASSERT (TRUE);
       return NULL;
     }
   } while (EntryPtr < ((UINT8*)IvhdBlockPtr + IvhdSize));
@@ -228,7 +229,7 @@ LibAmdGetNextDeviceEntry (
     } else if ((*EntryPtr >= 64) && (*EntryPtr < 128)) {
       EntryPtr += 8;
     } else {
-      ASSERT (TRUE);
+      CIMX_ASSERT (TRUE);
       return NULL;
     }
   }

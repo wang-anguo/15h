@@ -32,7 +32,7 @@ config DEVICETREE
 
 config HW_MEM_HOLE_SIZEK
 	hex
-	default 0x100000
+	default 0x200000
 
 config MAX_CPUS
 	int

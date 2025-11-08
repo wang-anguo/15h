@@ -47,11 +47,74 @@ config XIP_ROM_SIZE
 	hex
 	default 0x80000
 
-config REDIRECT_IDS_HDT_CONSOLE_TO_SERIAL
-	bool "Redirect AGESA IDS_HDT_CONSOLE to serial console"
+config ENABLE_AGESA_DEBUGGER
+	bool "Enable AGESA Debugging"
 	default n
 	help
-	  This Option allows you to redirect the AMD AGESA IDS_HDT_CONSOLE debug information to the serial console.
+	  This option enables the AMD AGESA IDS_HDT_CONSOLE and redirects it to the coreboot console.
+
+	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
+
+config ENABLE_AGESA_DEBUG_CONFIG
+	bool "Debug AGESA Config"
+	default n
+	depends on ENABLE_AGESA_DEBUGGER
+	help
+	  This option outputs the AGESA build options to the coreboot console.
+
+	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
+
+config ENABLE_AGESA_DEBUG_CPU
+	bool "Debug AGESA CPU Code"
+	default n
+	depends on ENABLE_AGESA_DEBUGGER
+	help
+	  This option outputs the AGESA CPU debug messages to the coreboot console.
+
+	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
+
+config ENABLE_AGESA_DEBUG_HT
+	bool "Debug AGESA HT Code"
+	default n
+	depends on ENABLE_AGESA_DEBUGGER
+	help
+	  This option outputs the AGESA HT debug messages to the coreboot console.
+
+	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
+
+config ENABLE_AGESA_DEBUG_MEM_STATUS
+	bool "Debug AGESA MEM Status"
+	default n
+	depends on ENABLE_AGESA_DEBUGGER
+	help
+	  This option outputs the AGESA MEM STATUS debug messages to the coreboot console.
+
+	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
+
+config ENABLE_AGESA_DEBUG_MEM_FLOW
+	bool "Debug AGESA MEM Flow"
+	default n
+	depends on ENABLE_AGESA_DEBUGGER
+	help
+	  This option outputs the AGESA MEM FLOW debug messages to the coreboot console.
+
+	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
+
+config ENABLE_AGESA_DEBUG_MEM_REGISTERS
+	bool "Debug AGESA MEM Registers"
+	default n
+	depends on ENABLE_AGESA_DEBUGGER
+	help
+	  This option outputs the AGESA MEM REGISTER debug messages to the coreboot console.
+
+	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
+
+config ENABLE_AGESA_DEBUG_S3
+	bool "Debug AGESA S3 Code"
+	default n
+	depends on ENABLE_AGESA_DEBUGGER
+	help
+	  This option outputs the AGESA S3 debug messages to the coreboot console.
 
 	  Warning: Only enable this option when debuging or tracing AMD AGESA code.
 

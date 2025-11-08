@@ -20,12 +20,11 @@ config NORTHBRIDGE_AMD_CIMX_RD890
 
 if NORTHBRIDGE_AMD_CIMX_RD890
 
-config REDIRECT_NBCIMX_TRACE_TO_SERIAL
-	bool "Redirect AMD Northbridge CIMX Trace to serial console"
+config ENABLE_NB_CIMX_DEBUGGER
+	bool "Enable CIMx Debugging"
 	default n
 	help
-	  This Option allows you to redirect the AMD Northbridge CIMX
-	  Trace debug information to the serial console.
+	  This option enables the AMD CIMX debugger and redirects it to the coreboot console.
 
 	  Warning: Only enable this option when debuging or tracing AMD CIMX code.
 

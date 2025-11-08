@@ -685,7 +685,7 @@ SetRegisterForDeemphasisEntry (
         Link,
         StdHeader
         );
-      IDS_HDT_CONSOLE (HT_TRACE, "Socket %d Module %d Sub-link %1d :\n  ----> running on HT3, %s Level is %s\n",
+      IDS_HDT_CONSOLE (HT_TRACE, "Socket %d Module %d Sub-link %1d: HT3 %s Level is %s\n",
         MySocket, MyModule,
         ((Entry->DeemphasisEntry.HtPhyEntry.TypeFeats.HtPhyLinkValue & HTPHY_LINKTYPE_SL0_ALL) != 0) ? Link : (Link + 4),
         ((Entry->DeemphasisEntry.Levels.DeemphasisValues & DCV_LEVELS_ALL) != 0) ? "DCV" : "Deemphasis",

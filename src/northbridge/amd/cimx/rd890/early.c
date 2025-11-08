@@ -14,10 +14,28 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 #include "NbPlatform.h"
-#include "rd890_cfg.h"
 #include "nb_cimx.h"
+#include "cfg.h"
 
+static u32 rd890_callout_entry(u32 func, uintptr_t data, void *config)
+{
+	u32 ret = 0;
+
+	switch(func) {
+		case CB_AmdSetNbPorConfig: // 0x9000
+			printk(BIOS_DEBUG, "%s (early): CB_AmdSetNbPorConfig\n", __func__);
+			break;
+		case CB_AmdSetHtConfig: // 0x9001
+			printk(BIOS_DEBUG, "%s (early): CB_AmdSetHtConfig\n", __func__);
+			break;
+		default:
+			printk(BIOS_DEBUG, "%s (early): func = %08X\n", __func__, func);
+			break;
+	}
+	return ret;
+}
 
 /**
  * @brief disable GPP1 Port0,1, GPP2, GPP3a Port0,1,2,3,4,5, GPP3b
@@ -27,79 +45,84 @@
  */
 void sr56x0_rd890_disable_pcie_bridge(void)
 {
-	u32			nb_dev;
-	u32			mask;
-	u32			val;
-	AMD_NB_CONFIG_BLOCK	cfg_block;
-	AMD_NB_CONFIG_BLOCK	*cfg_ptr = &cfg_block;
-	AMD_NB_CONFIG		*nb_cfg  = &(cfg_block.Northbridges[0]);
+	AMD_NB_CONFIG_BLOCK gConfig;
+	AMD_NB_CONFIG_BLOCK *gConfigPtr = &gConfig;
+	NB_CONFIG nb_cfg[MAX_NB_COUNT];
+	HT_CONFIG ht_cfg[MAX_NB_COUNT];
+	PCIE_CONFIG pcie_cfg[MAX_NB_COUNT];
+	u32 mask;
+	u32 val;
+	u32 i;
 
-	nb_cfg->ConfigPtr = &cfg_ptr;
-	nb_dev = MAKE_SBDFO(0, 0x0, 0x0, 0x0, 0x0);
+	memset(&gConfig, 0, sizeof(AMD_NB_CONFIG_BLOCK));
+	for (i = 0; i < MAX_NB_COUNT; i++) {
+		memset(&nb_cfg[i], 0, sizeof(NB_CONFIG));
+		memset(&ht_cfg[i], 0, sizeof(NB_CONFIG));
+		memset(&pcie_cfg[i], 0, sizeof(NB_CONFIG));
+		gConfig.Northbridges[i].pNbConfig = &nb_cfg[i];
+		gConfig.Northbridges[i].pHtConfig = &ht_cfg[i];
+		gConfig.Northbridges[i].pPcieConfig = &pcie_cfg[i];
+		gConfig.Northbridges[i].ConfigPtr = &gConfigPtr;
+	}
+
 	val = (1 << 2) | (1 << 3); /*GPP1*/
 	val |= (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) | (1 << 16) | (1 << 17); /*GPP3a*/
 	val |= (1 << 18) | (1 << 19); /*GPP2*/
 	val |= (1 << 20); /*GPP3b*/
 	mask = ~val;
-	LibNbPciIndexRMW(nb_dev | NB_MISC_INDEX, NB_MISC_REG0C,
-			AccessS3SaveWidth32,
-			mask,
-			val,
-			nb_cfg);
+	for(i = 0; i < MAX_NB_COUNT; i++) {
+		LibNbPciIndexRMW(MAKE_SBDFO(0, (i * 0x40), 0x0, 0x0, 0x0) | NB_MISC_INDEX, NB_MISC_REG0C,
+				 AccessS3SaveWidth32, mask, val, &(gConfig.Northbridges[i]));
+	}
 }
 
 
 /**
- * @brief South Bridge CIMx romstage entry,
+ * @brief North Bridge CIMx romstage entry,
  *  wrapper of AmdPowerOnResetInit entry point.
  */
 void nb_Poweron_Init(void)
 {
+	AMD_NB_CONFIG_BLOCK gConfig;
+	AMD_NB_CONFIG_BLOCK *gConfigPtr = &gConfig;
 	NB_CONFIG nb_cfg[MAX_NB_COUNT];
 	HT_CONFIG ht_cfg[MAX_NB_COUNT];
 	PCIE_CONFIG pcie_cfg[MAX_NB_COUNT];
-	AMD_NB_CONFIG_BLOCK gConfig;
-	AMD_NB_CONFIG_BLOCK *ConfigPtr = &gConfig;
 	AGESA_STATUS status;
 
 	printk(BIOS_DEBUG, "cimx/rd890 early.c %s() Start\n", __func__);
+
 	CIMX_INIT_TRACE();
 	CIMX_TRACE((BIOS_DEBUG, "NbPowerOnResetInit entry\n"));
-	rd890_cimx_config(&gConfig, &nb_cfg[0], &ht_cfg[0], &pcie_cfg[0]);
 
-	if (ConfigPtr->StandardHeader.CalloutPtr != NULL) {
-		ConfigPtr->StandardHeader.CalloutPtr(CB_AmdSetNbPorConfig, 0, &gConfig);
-	}
+	rd890_cimx_config(&gConfigPtr, &nb_cfg[0], &ht_cfg[0], &pcie_cfg[0]);
+	gConfig.StandardHeader.CalloutPtr = &rd890_callout_entry;
 
-	status = AmdPowerOnResetInit(&gConfig);
+	status = AmdPowerOnResetInit(gConfigPtr);
+
 	printk(BIOS_DEBUG, "cimx/rd890 early.c %s() End. return status=%x\n", __func__, status);
 }
 
 /**
- * @brief South Bridge CIMx romstage entry,
+ * @brief North Bridge CIMx romstage entry,
  *  wrapper of AmdHtInit entry point.
  */
 void nb_Ht_Init(void)
 {
-	AGESA_STATUS status;
+	AMD_NB_CONFIG_BLOCK gConfig;
+	AMD_NB_CONFIG_BLOCK *gConfigPtr = &gConfig;
 	NB_CONFIG nb_cfg[MAX_NB_COUNT];
 	HT_CONFIG ht_cfg[MAX_NB_COUNT];
 	PCIE_CONFIG pcie_cfg[MAX_NB_COUNT];
-	AMD_NB_CONFIG_BLOCK gConfig;
-	AMD_NB_CONFIG_BLOCK *ConfigPtr = &gConfig;
-	u32 i;
+	AGESA_STATUS status;
 
-	rd890_cimx_config(&gConfig, &nb_cfg[0], &ht_cfg[0], &pcie_cfg[0]);
+	rd890_cimx_config(&gConfigPtr, &nb_cfg[0], &ht_cfg[0], &pcie_cfg[0]);
+	gConfig.StandardHeader.CalloutPtr = &rd890_callout_entry;
 
 	//Initialize HT structure
-	LibSystemApiCall(AmdHtInitializer, &gConfig);
-	for (i = 0; i < MAX_NB_COUNT; i ++) {
-		if (ConfigPtr->StandardHeader.CalloutPtr != NULL) {
-			ConfigPtr->StandardHeader.CalloutPtr(CB_AmdSetHtConfig, 0, (VOID*)&(gConfig.Northbridges[i]));
-		}
-	}
+	LibSystemApiCall(AmdHtInitializer, gConfigPtr);
 
-	status = LibSystemApiCall(AmdHtInit, &gConfig);
+	status = LibSystemApiCall(AmdHtInit, gConfigPtr);
 	printk(BIOS_DEBUG, "AmdHtInit status: %x\n", status);
 }
 

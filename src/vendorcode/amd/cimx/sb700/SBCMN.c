@@ -46,7 +46,7 @@ REG8MASK sbEarlyPostByteInitTable[]={
         {SB_SMBUS_REGAD, ~(UINT8)(BIT0+BIT1+BIT2+BIT4), BIT0+BIT3},        	// Initialize SATA to default values, SATA Enabled,
                                                                            	// Combined mode enabled, SATA as primary, power saving enable
         {SB_SMBUS_REGAF, 0xE3, 6 << 2},                                         // Set SATA Interrupt to INTG#
-	#if !(CONFIG(CONSOLE_USB) && CONFIG(REDIRECT_SBCIMX_TRACE_TO_SERIAL))   // Do not disable USB controllers if USB debugging!
+	#ifndef DISABLE_USB_RESET
         {SB_SMBUS_REG68, BIT3, 0 },                                        	// First disable all usb controllers and then enable then according to setup selection
 	#endif
         {0xFF, 0xFF, 0xFF},
