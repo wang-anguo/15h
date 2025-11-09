@@ -94,7 +94,10 @@ REG8MASK sbEarlyPostByteInitTable[]={
 
 REG8MASK sbEarlyPostPmioInitTbl[]={
         // index                andmask ormask
-        {SB_PMIO_REG55, ~(UINT8)(BIT3+BIT4+BIT5), BIT5+BIT3}, //BIT3(PcieNative)=1b, BIT4(Pcie_Wak_Mask)=0b, BIT5(Pcie_WAK_Sci)=1b
+        {SB_PMIO_REG55, ~(UINT8)(BIT3+BIT4+BIT5+BIT0), BIT5+BIT3+BIT0}, //BIT0(SoftPciRstEn)=1b,
+	                                                                //BIT3(PcieNative)=1b,
+	                                                                //BIT4(Pcie_Wak_Mask)=0b,
+									//BIT5(Pcie_WAK_Sci)=1b
         {SB_PMIO_REG01, 0xff, BIT1},
         {SB_PMIO_REG0E, 0xff, BIT2 + BIT3},
         {SB_PMIO_REG10, 0x3E, (BIT6+BIT5+BIT3+BIT1)},   // RTC_En_En + TMR_En_En + GLB_EN_EN and clear EOS_EN + PciExpWakeDisEn
@@ -109,7 +112,7 @@ REG8MASK sbEarlyPostPmioInitTbl[]={
         {SB_PMIO_REG39, 0xFF, 0xFF },
         {SB_PMIO_REG7C, ~(UINT8)(BIT5+BIT3+BIT2), BIT3+BIT2},          //Turn on BLink LED
         {SB_PMIO_REG67, 0xFF, 0x06},            // C State enable, must be set in order to exercise C state
-        {SB_PMIO_REG68, 0x38, 0x84},
+        {SB_PMIO_REG68, 0x38, 0x8C},            // THERMTRIP support
         {SB_PMIO_REG8D, 0xFF, 0x01},            // Set PM_Reg_0x8D[0] to enable PmeTurnOff/PmeMsgAck handshake to fix PCIE LAN S3/S4 wake failure
         {SB_PMIO_REG84, 0xFD, BIT3+BIT0},
         {SB_PMIO_REG53, 0xFF, BIT7+BIT6},       //ACPI System Clock setting, PMIO Reg 0x53[6]=1. Our reference clock

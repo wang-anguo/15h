@@ -187,14 +187,14 @@ F15OrInitializeLowPwrPstate (
       IntNode0PciAddress.Address.Function = FUNC_3;
       IntNode0PciAddress.Address.Register = HTC_REG;
       LibAmdPciRead (AccessWidth32, IntNode0PciAddress, &PciData, StdHeader);
-      if (((HTC_REGISTER *) &PciData)->HtcTmpLmt == 0) {
-        ((HTC_REGISTER *) &PciData)->HtcTmpLmt = 0x7F;
-      }
       ((HTC_REGISTER *) &PciData)->HtcEn = 1;
+      ((HTC_REGISTER *) &PciData)->HtcTmpLmt = 0x14; // Throttle at 62C
       IDS_OPTION_HOOK (IDS_HTC_CTRL, &PciData, StdHeader);
       LibAmdPciWrite (AccessWidth32, IntNode0PciAddress, &PciData, StdHeader);
-      IDS_HDT_CONSOLE (MAIN_FLOW, "%s: HtcEn = 0x%02X\n", __func__, ((HTC_REGISTER *) &PciData)->HtcEn);
-      IDS_HDT_CONSOLE (MAIN_FLOW, "%s: HtcTmpLmt = %d C\n", __func__, ((((HTC_REGISTER *) &PciData)->HtcTmpLmt) >> 1) + 52);
+      IDS_HDT_CONSOLE (MAIN_FLOW, "      HtcEn = 0x%02X\n", ((HTC_REGISTER *) &PciData)->HtcEn);
+      IDS_HDT_CONSOLE (MAIN_FLOW, "      HtcTmpLmt = %d C\n", ((((HTC_REGISTER *) &PciData)->HtcTmpLmt) >> 1) + 52);
+      IDS_HDT_CONSOLE (MAIN_FLOW, "      HtcHystLmt = %d C\n", ((((HTC_REGISTER *) &PciData)->HtcHystLmt) >> 1));
+      IDS_HDT_CONSOLE (MAIN_FLOW, "      HtcSlewSel = 0x%02X\n", ((HTC_REGISTER *) &PciData)->HtcSlewSel);
     }
 
     // Step 11 --- Write OriginalPstate to MSR_C001_0062[PstateCmd]
@@ -218,7 +218,7 @@ F15OrInitializeLowPwrPstate (
     if (Core == 0) {
       ((HTC_REGISTER *) &PciData)->HtcPstateLimit = PstateMaxVal;
       LibAmdPciWrite (AccessWidth32, IntNode0PciAddress, &PciData, StdHeader);
-      IDS_HDT_CONSOLE (MAIN_FLOW, "%s: HtcPstateLimit = 0x%02X\n", __func__, ((HTC_REGISTER *) &PciData)->HtcPstateLimit);
+      IDS_HDT_CONSOLE (MAIN_FLOW, "      HtcPstateLimit = 0x%02X\n", ((HTC_REGISTER *) &PciData)->HtcPstateLimit);
       PciAddress.Address.Register = POPUP_PSTATE_REG;
       LibAmdPciRead (AccessWidth32, PciAddress, &PciData, StdHeader);
       ((POPUP_PSTATE_REGISTER *) &PciData)->PopDownPstate = PstateMaxVal;
