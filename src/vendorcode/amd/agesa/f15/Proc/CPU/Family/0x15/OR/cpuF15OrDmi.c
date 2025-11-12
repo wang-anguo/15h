@@ -76,6 +76,7 @@ extern CPU_FAMILY_SUPPORT_TABLE            PstateFamilyServiceTable;
 CONST CHAR8 ROMDATA str_Opteron_62[] = "AMD Opteron(tm) Processor 62";
 CONST CHAR8 ROMDATA str_Opteron_63[] = "AMD Opteron(tm) Processor 63";
 CONST CHAR8 ROMDATA str_Opteron_42[] = "AMD Opteron(tm) Processor 42";
+CONST CHAR8 ROMDATA str_Opteron_43[] = "AMD Opteron(tm) Processor 43";
 CONST CHAR8 ROMDATA str_Opteron_3[] = "AMD Opteron(tm) Processor 3";
 CONST CHAR8 ROMDATA str_FX_AM3[] = "AMD FX(tm)-";
 /*---------------------------------------------------------------------------------------
@@ -93,7 +94,8 @@ CONST CPU_T4_PROC_FAMILY ROMDATA F15OrG34T4ProcFamily[] =
 
 CONST CPU_T4_PROC_FAMILY ROMDATA F15OrC32T4ProcFamily[] =
 {
-  {str_Opteron_42, 0x3E}
+  {str_Opteron_42, 0x3E},
+  {str_Opteron_43, 0x4E}
 };
 
 CONST CPU_T4_PROC_FAMILY ROMDATA F15OrAM3T4ProcFamily[] =
