@@ -397,7 +397,12 @@ extern F_IS_NB_PSTATE_ENABLED F15IsNbPstateEnabled;
     };
 
     #define OR_SOCKETS 8
-    #define OR_MODULES 2
+    #if OPTION_G34_SOCKET_SUPPORT == TRUE
+      #define OR_MODULES 2
+    #endif
+    #if OPTION_C32_SOCKET_SUPPORT == TRUE
+      #define OR_MODULES 1
+    #endif
     #define OR_RECOVERY_SOCKETS 1
     #define OR_RECOVERY_MODULES 1
     extern F_CPU_GET_SUBFAMILY_ID_ARRAY GetF15OrLogicalIdAndRev;
