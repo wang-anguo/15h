@@ -16,6 +16,7 @@
 #include <device/pci_def.h>
 #include <device/device.h>
 #include <stdlib.h>
+#include <spd_bin.h>
 #include "OEM.h"		/* SMBUS0_BASE_ADDRESS */
 
 /* warning: Porting.h includes an open #pragma pack(1) */
@@ -33,7 +34,6 @@ AGESA_STATUS AmdMemoryReadSPD (UINT32 unused1, UINTN unused2, AGESA_READ_SPD_PAR
 {
 	UINT8 spdAddress;
 	int err;
-	int i;
 
 	DEVTREE_CONST struct device *dev = dev_find_slot(0, PCI_DEVFN(0x18, 2));
 	if (dev == NULL)
@@ -60,12 +60,10 @@ AGESA_STATUS AmdMemoryReadSPD (UINT32 unused1, UINTN unused2, AGESA_READ_SPD_PAR
 	if (err)
 		return AGESA_ERROR;
 
-	printk(BIOS_DEBUG, "AmdMemoryReadSPD, Socket %d, Channel %d, Dimm %d, SpdAddr %02Xh\n", info->SocketId, info->MemChannelId, info->DimmId, spdAddress);
-	printk(BIOS_DEBUG, "SPD Hex dump:\n");
-	for(i = 0; i < 256; i++) {
-		printk(BIOS_DEBUG, " %02X", (uint8_t)(info->Buffer[i]));
-		if((i+1) % 64 == 0) printk(BIOS_DEBUG, "\n");
-	}
-	printk(BIOS_DEBUG, "\n\n");
+	printk(BIOS_INFO, "SPD: Socket %d, Channel %d, Dimm %d\n", info->SocketId, info->MemChannelId, info->DimmId);
+	printk(BIOS_DEBUG, "SPD: Address: 0x%02X\n", spdAddress);
+	print_spd_info(info->Buffer);
+	printk(BIOS_INFO, "\n");
+
 	return AGESA_SUCCESS;
 }
