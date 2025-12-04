@@ -1260,10 +1260,8 @@ DefinitionBlock (
 			} /* end AZHD */
 
 			Device(LIBR) {
+				Name (_HID, EisaId ("PNP0A05"))
 				Name(_ADR, 0x00140003)
-				/* Method(_INI) {
-				*	DBGO("\\_SB\\PCI0\\LpcIsaBr\\_INI\n")
-				} */ /* End Method(_SB.SBRDG._INI) */
 
 				/* Real Time Clock Device */
 				Device(RTC0) {
@@ -1273,7 +1271,7 @@ DefinitionBlock (
 						IO(Decode16,0x0070, 0x0070, 0, 2)
 						/* IO(Decode16,0x0070, 0x0070, 0, 4) */
 					})
-				} /* End Device(_SB.PCI0.LpcIsaBr.RTC0) */
+				} /* End Device(_SB.PCI0.LIBR.RTC0) */
 
 				Device(TMR) {	/* Timer */
 					Name(_HID,EISAID("PNP0100"))	/* System Timer */
@@ -1282,14 +1280,14 @@ DefinitionBlock (
 						IO(Decode16, 0x0040, 0x0040, 0, 4)
 						/* IO(Decode16, 0x0048, 0x0048, 0, 4) */
 					})
-				} /* End Device(_SB.PCI0.LpcIsaBr.TMR) */
+				} /* End Device(_SB.PCI0.LIBR.TMR) */
 
 				Device(SPKR) {	/* Speaker */
 					Name(_HID,EISAID("PNP0800"))	/* AT style speaker */
 					Name(_CRS, ResourceTemplate() {
 						IO(Decode16, 0x0061, 0x0061, 0, 1)
 					})
-				} /* End Device(_SB.PCI0.LpcIsaBr.SPKR) */
+				} /* End Device(_SB.PCI0.LIBR.SPKR) */
 
 				Device(PIC) {
 					Name(_HID,EISAID("PNP0000"))	/* AT Interrupt Controller */
@@ -1300,7 +1298,7 @@ DefinitionBlock (
 						/* IO(Decode16, 0x00D0, 0x00D0, 0x10, 0x02) */
 						/* IO(Decode16, 0x04D0, 0x04D0, 0x10, 0x02) */
 					})
-				} /* End Device(_SB.PCI0.LpcIsaBr.PIC) */
+				} /* End Device(_SB.PCI0.LIBR.PIC) */
 
 				Device(MAD) { /* 8257 DMA */
 					Name(_HID,EISAID("PNP0200"))	/* Hardware Device ID */
@@ -1312,8 +1310,8 @@ DefinitionBlock (
 						IO(Decode16, 0x0089, 0x0089, 0x01, 0x03)
 						IO(Decode16, 0x008F, 0x008F, 0x01, 0x01)
 						IO(Decode16, 0x00C0, 0x00C0, 0x10, 0x20)
-					}) /* End Name(_SB.PCI0.LpcIsaBr.MAD._CRS) */
-				} /* End Device(_SB.PCI0.LpcIsaBr.MAD) */
+					}) /* End Name(_SB.PCI0.LIBR.MAD._CRS) */
+				} /* End Device(_SB.PCI0.LIBR.MAD) */
 
 				Device(COPR) {
 					Name(_HID,EISAID("PNP0C04"))	/* Math Coprocessor */
@@ -1321,7 +1319,7 @@ DefinitionBlock (
 						IO(Decode16, 0x00F0, 0x00F0, 0, 0x10)
 						IRQNoFlags(){13}
 					})
-				} /* End Device(_SB.PCI0.LpcIsaBr.COPR) */
+				} /* End Device(_SB.PCI0.LIBR.COPR) */
 
 				Device (PS2M) {
 					Name (_HID, EisaId ("PNP0F13"))
@@ -1374,6 +1372,50 @@ DefinitionBlock (
 						Return(CRS)
 					}
 				} /* End Device(_SB.PCI0.LIBR.HPET) */
+
+				Device (URT1) {
+					Name (_HID,EISAID("PNP0501"))		// "PNP0501" for UART
+					Name(_PRW, Package () {0x03, 0x04})	// Wake from S1-S4
+					Name (_PRS, ResourceTemplate() {
+						StartDependentFn(0, 1) {
+							IO(Decode16, 0x3f8, 0x3f8, 0x8, 0x8)
+							IRQNoFlags() { 4 }
+						} EndDependentFn()
+					})
+					Method (_CRS, 0)
+					{
+						Return(ResourceTemplate() {
+							IO(Decode16, 0x3f8, 0x3f8, 0x8, 0x8)
+							IRQNoFlags() { 4 }
+						})
+					}
+					Method (_STA, 0, NotSerialized)
+					{
+						Return (0x0f)			// Always enable
+					}
+				} /* End Device(_SB.PCI0.LIBR.URT1) */
+
+				Device (URT2) {
+					Name (_HID,EISAID("PNP0501"))		// "PNP0501" for UART
+					Name(_PRW, Package () {0x03, 0x04})	// Wake from S1-S4
+					Name (_PRS, ResourceTemplate() {
+						StartDependentFn(0, 1) {
+							IO(Decode16, 0x2f8, 0x2f8, 0x8, 0x8)
+							IRQNoFlags() { 3 }
+						} EndDependentFn()
+					})
+					Method (_CRS, 0)
+					{
+						Return(ResourceTemplate() {
+							IO(Decode16, 0x2f8, 0x2f8, 0x8, 0x8)
+							IRQNoFlags() { 3 }
+						})
+					}
+					Method (_STA, 0, NotSerialized)
+					{
+						Return (0x0f)			// Always enable
+					}
+				} /* End Device(_SB.PCI0.LIBR.URT2) */
 			} /* end LIBR */
 
 			Device(HPBR) {
