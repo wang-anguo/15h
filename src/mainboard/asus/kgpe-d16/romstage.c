@@ -48,10 +48,7 @@ void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 	post_code(0x33);
 	report_bist_failure(bist);
 
-	sb7xx_51xx_enable_wideio(0, 0x1600); /* though UARTs are on the NUVOTON BMC */
-	//wpcm450_enable_dev(WPCM450_SP1, SIO_PORT, CONFIG_TTYS0_BASE);
 	winbond_enable_serial(SERIAL_0_DEV, CONFIG_TTYS0_BASE);
-	sb7xx_51xx_disable_wideio(0);
 	post_code(0x34);
 
 	post_code(0x35);
