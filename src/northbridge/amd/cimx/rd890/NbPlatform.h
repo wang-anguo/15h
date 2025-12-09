@@ -114,4 +114,8 @@
 #define RD890_TEST_THERMAL_SHUTDOWN 0
 #endif
 
+#ifdef RD890_MAINBOARD_OVERRIDE_CFG
+void mainboard_rd890_override_cfg(AMD_NB_CONFIG_BLOCK *gConfigPtr);
+#endif
+
 #endif

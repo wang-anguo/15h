@@ -317,6 +317,10 @@ static void rd890_init(void *chip_info) {
 			pcie_cfg[nb_index].PortConfiguration[i].PortLinkMode = PcieLinkModeGen2;
 		}
 	}
+
+	#ifdef RD890_MAINBOARD_OVERRIDE_CFG
+	mainboard_rd890_override_cfg(gConfigPtr);
+	#endif
 }
 
 static void rd890_final(void *chip_info) {
