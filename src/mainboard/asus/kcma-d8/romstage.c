@@ -48,9 +48,13 @@ void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 	post_code(0x33);
 	report_bist_failure(bist);
 
-	winbond_enable_serial(SERIAL_0_DEV, CONFIG_TTYS0_BASE);
+	/* Setup early serial */
+	winbond_set_pinmux(SERIAL_1_DEV, W83667HG_SPI_PINMUX_OFFSET, W83667HG_SPI_PINMUX_GPIO4_SERIAL_B_MASK, W83667HG_SPI_PINMUX_SERIAL_B);
+	if(CONFIG_UART_FOR_CONSOLE == 0) winbond_enable_serial(SERIAL_0_DEV, CONFIG_TTYS0_BASE);
+	if(CONFIG_UART_FOR_CONSOLE == 1) winbond_enable_serial(SERIAL_1_DEV, CONFIG_TTYS0_BASE);
 	post_code(0x34);
 
+	/* Start coreboot console */
 	post_code(0x35);
 	console_init();
 
