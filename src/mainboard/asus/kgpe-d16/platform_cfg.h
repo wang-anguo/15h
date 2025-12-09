@@ -118,4 +118,6 @@
 	1 = Enabled */
 #define RD890_TEST_THERMAL_SHUTDOWN	0
 
+#define RD890_MAINBOARD_OVERRIDE_CFG
+
 #endif //_PLATFORM_CFG_H_
