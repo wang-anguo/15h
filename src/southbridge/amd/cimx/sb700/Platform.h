@@ -68,4 +68,8 @@ typedef union _PCI_ADDR{
 
 #define DMSG_SB_TRACE   0x02
 
+#ifndef SB700_DUMP_GPIO
+#define SB700_DUMP_GPIO 0
+#endif
+
 #endif /* _AMD_SB_CIMx_PLATFORM_H_ */

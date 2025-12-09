@@ -277,6 +277,65 @@ static void sb700_enable(struct device *dev)
 	}
 }
 
+static void sb700_gpio_dump1(int reg) {
+	pci_devfn_t sm_dev       = PCI_DEV(0, 0x14, 0); //SMBus
+	UINT16    r16, v16;
+
+	r16 = pci_s_read_config16(sm_dev, reg);
+	v16 = r16| BIT4|BIT5|BIT6|BIT7;
+	pci_s_write_config16(sm_dev, reg, v16);
+	v16 = pci_s_read_config16(sm_dev, reg);
+	pci_s_write_config16(sm_dev, reg, r16);
+	printk(BIOS_DEBUG, "SB700 GPIO Reg %02X = %04X\n", reg, v16);
+}
+
+static void sb700_gpio_dump2(int reg) {
+	pci_devfn_t sm_dev       = PCI_DEV(0, 0x14, 0); //SMBus
+	UINT16    r16, v16;
+
+	r16 = pci_s_read_config16(sm_dev, reg);
+	v16 = r16| BIT4|BIT5|BIT6|BIT7 |BIT12|BIT13|BIT14|BIT15;
+	pci_s_write_config16(sm_dev, reg, v16);
+	v16 = pci_s_read_config16(sm_dev, reg);
+	pci_s_write_config16(sm_dev, reg, r16);
+	printk(BIOS_DEBUG, "SB700 GPIO Reg %02X = %04X\n", reg, v16);
+}
+
+static void sb700_gpio_dump3(int ctrl, int status) {
+	pci_devfn_t sm_dev       = PCI_DEV(0, 0x14, 0); //SMBus
+	UINT32    r32, v32;
+	UINT16 v16;
+
+	r32 = pci_s_read_config32(sm_dev, ctrl);
+	v32 = r32| BIT16|BIT17|BIT18|BIT19|BIT20|BIT21|BIT22|BIT23|BIT24|BIT25|BIT26|BIT27|BIT28|BIT29|BIT30|BIT31;
+	pci_s_write_config32(sm_dev, ctrl, v32);
+	v32 = pci_s_read_config32(sm_dev, ctrl);
+	v16 = pci_s_read_config16(sm_dev, status);
+	pci_s_write_config32(sm_dev, ctrl, r32);
+	printk(BIOS_DEBUG, "SB700 GPIO Reg %02X = %04X\n", status, v16);
+}
+
+static void sb700_final(void *chip_info) {
+	if(SB700_DUMP_GPIO) {
+		printk(BIOS_DEBUG, "--- DUMPING SB700 GPIO BEG ---\n");
+		sb700_gpio_dump1(0x50); // GPIO_52_to_49_Cntrl
+		sb700_gpio_dump1(0x52); // GPIO_56_to_53_Cntrl
+		sb700_gpio_dump1(0x54); // GPIO_60_to_57_Cntrl
+		sb700_gpio_dump1(0x56); // GPIO_64_to_61_Cntrl
+		sb700_gpio_dump2(0x5A); // GPIO_73_to_70_Cntrl
+		sb700_gpio_dump1(0x7E); // GPIO_69_68_66_65_Cntrl
+		sb700_gpio_dump1(0x80); // GPIO_3_to_0_Cntrl
+		sb700_gpio_dump2(0x82); // GPIO_32_31_14_13_Cntrl
+		sb700_gpio_dump3(0xA0, 0xA4); // IDE_GPIO_Cntrl / IDE_GPIO_In
+		sb700_gpio_dump2(0xA6); // GPIO_48_47_46_37_Cntrl
+		// GPIO_12_to_4_Cntrl		0xA8
+		// SATA_ACT_GPIO_Cntrl 		0xAC
+		// PCI_INT_GPIO_Cntrl		0xBC
+		printk(BIOS_DEBUG, "--- DUMPING SB700 GPIO END ---\n");
+	}
+
+}
+
 static void sb700_init(void *chip_info)
 {
 	printk(BIOS_DEBUG, "SB700: %s\n", __func__);
@@ -288,4 +347,5 @@ struct chip_operations southbridge_amd_cimx_sb700_ops = {
 	CHIP_NAME("ATI SB700")
 	.init = sb700_init,
 	.enable_dev = sb700_enable,
+	.final = sb700_final,
 };

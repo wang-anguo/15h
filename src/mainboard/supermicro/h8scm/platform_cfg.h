@@ -88,6 +88,12 @@
  */
 #define AZALIA_SDIN_PIN                 0x2A
 
+/**
+ * Dump GPIO pins on the SB700
+	0 = Disabled
+	1 = Enabled */
+#define SB700_DUMP_GPIO                 0
+
 /********** RD890 **********/
 
 /**
