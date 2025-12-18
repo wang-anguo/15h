@@ -1,7 +1,5 @@
 /*** SP5100 SMBUS GPIO ***/
 
-#define SMBUS_GPIO_PCIE5_ABSENT		19
-
 #define SMBUS_GPIO_SPD_MUX_ENABLE	52
 /* SPD Mux Settings
 BIT1    BIT0    State
