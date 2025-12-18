@@ -26,14 +26,91 @@
 #include <northbridge/amd/agesa/agesawrapper.h>
 #include <northbridge/amd/agesa/agesa_helper.h>
 #include <northbridge/amd/agesa/family15/reset_test.h>
+#include <southbridge/amd/cimx/sb700/gpio.h>
 #include <nb_cimx.h>
 #include <sb_cimx.h>
 #include <cbmem.h>
 #include <superio/winbond/common/winbond.h>
 #include <superio/winbond/w83667hg-a/w83667hg-a.h>
 
+#include "gpio.h"
+
 #define SERIAL_0_DEV PNP_DEV(0x2e, W83667HG_A_SP1)
 #define SERIAL_1_DEV PNP_DEV(0x2e, W83667HG_A_SP2)
+
+static void setup_gpio(void) {
+	printk(BIOS_DEBUG, "Setting SP5100 GPIO Defaults\n");
+
+	// Set GPIO Enable/Disable and Tristate/Output
+	sb700_gpio_config(0, TRISTATE);
+	sb700_gpio_config(1, TRISTATE);
+	sb700_gpio_config(2, TRISTATE);
+	sb700_gpio_config(3, TRISTATE);
+	sb700_gpio_config(4, TRISTATE);
+	sb700_gpio_config(5, TRISTATE);
+	sb700_gpio_config(6, TRISTATE);
+	sb700_gpio_config(7, TRISTATE);
+	sb700_gpio_config(8, TRISTATE);
+	sb700_gpio_config(9, TRISTATE);
+	sb700_gpio_config(10, TRISTATE);
+	sb700_gpio_disable(11);
+	sb700_gpio_disable(12);
+	sb700_gpio_disable(13);
+	sb700_gpio_disable(14);
+	sb700_gpio_enable(15); // Enables 15-30
+	sb700_gpio_config(15, TRISTATE);
+	sb700_gpio_config(16, TRISTATE);
+	sb700_gpio_config(17, TRISTATE);
+	sb700_gpio_config(18, TRISTATE);
+	sb700_gpio_config(SMBUS_GPIO_PCIE5_ABSENT, TRISTATE);
+	sb700_gpio_config(20, TRISTATE);
+	sb700_gpio_config(21, TRISTATE);
+	sb700_gpio_config(22, TRISTATE);
+	sb700_gpio_config(23, TRISTATE);
+	sb700_gpio_config(24, TRISTATE);
+	sb700_gpio_config(25, TRISTATE);
+	sb700_gpio_config(26, TRISTATE);
+	sb700_gpio_config(27, TRISTATE);
+	sb700_gpio_config(28, TRISTATE);
+	sb700_gpio_config(29, TRISTATE);
+	sb700_gpio_config(30, TRISTATE);
+	sb700_gpio_disable(31);
+	sb700_gpio_disable(32);
+	sb700_gpio_disable(33);
+	sb700_gpio_disable(34);
+	sb700_gpio_disable(35);
+	sb700_gpio_disable(36);
+	sb700_gpio_disable(37);
+	sb700_gpio_disable(46);
+	sb700_gpio_disable(47);
+	sb700_gpio_disable(48);
+	sb700_gpio_config(SMBUS_GPIO_SPD_MUX_ENABLE, OUTPUT);
+	sb700_gpio_config(53, TRISTATE);
+	sb700_gpio_config(54, TRISTATE);
+	sb700_gpio_config(56, TRISTATE);
+	sb700_gpio_config(57, OUTPUT);
+	sb700_gpio_config(58, OUTPUT);
+	sb700_gpio_config(SMBUS_GPIO_SPD_MUX_BIT0, OUTPUT);
+	sb700_gpio_config(SMBUS_GPIO_SPD_MUX_BIT1, OUTPUT);
+	sb700_gpio_config(61, TRISTATE);
+	sb700_gpio_config(62, TRISTATE);
+	sb700_gpio_config(63, OUTPUT);
+	sb700_gpio_config(65, TRISTATE);
+	sb700_gpio_config(66, TRISTATE);
+	sb700_gpio_disable(67);
+	sb700_gpio_disable(70);
+	sb700_gpio_disable(71);
+	sb700_gpio_disable(72);
+	sb700_gpio_disable(73);
+
+	// Set GPIO Output Values
+	sb700_gpio_set(SMBUS_GPIO_SPD_MUX_ENABLE, HIGH);
+	sb700_gpio_set(57, HIGH);
+	sb700_gpio_set(58, HIGH);
+	sb700_gpio_set(SMBUS_GPIO_SPD_MUX_BIT0, HIGH);
+	sb700_gpio_set(SMBUS_GPIO_SPD_MUX_BIT1, LOW);
+	sb700_gpio_set(63, LOW);
+}
 
 void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 {
@@ -92,6 +169,8 @@ void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 		die("After soft_reset - shouldn't see this message!!!\n");
 	}
 
+	setup_gpio();
+
 	post_code(0x40);
 	agesawrapper_amdinitpost();
 
@@ -101,11 +180,10 @@ void cache_as_ram_main(unsigned long bist, unsigned long cpu_init_detectedx)
 	agesawrapper_amdinitenv();
 	post_code(0x42);
 
-	printk(BIOS_DEBUG, "Configuring SP5100 GPIOs\n");
-	pci_write_config16(PCI_DEV(0, 0x14, 0), 0x50, 0x0170);
-	pci_write_config16(PCI_DEV(0, 0x14, 0), 0x54, 0x0707);
-	pci_write_config16(PCI_DEV(0, 0x14, 0), 0x56, 0x0bb0);
-	pci_write_config16(PCI_DEV(0, 0x14, 0), 0x5a, 0x0ff0);
+	// Disable SPD Mux
+	sb700_gpio_set(SMBUS_GPIO_SPD_MUX_BIT0, HIGH);
+	sb700_gpio_set(SMBUS_GPIO_SPD_MUX_BIT1, LOW);
+	sb700_gpio_set(SMBUS_GPIO_SPD_MUX_ENABLE, LOW);
 
 	post_code(0x50);
 	printk(BIOS_DEBUG, "Disabling cache as RAM ");

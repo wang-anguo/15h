@@ -18,21 +18,11 @@
 #include <northbridge/amd/agesa/BiosCallOuts.h>
 #include <device/pci_ops.h>
 #include <spd_bin.h>
+#include <southbridge/amd/cimx/sb700/gpio.h>
+
+#include "gpio.h"
 
 #ifdef __PRE_RAM__
-/* These defines are used to select the appropriate socket for the SPD read
- * because this is a multi-socket design.
- */
-#define PCI_REG_GPIO_60_to_57_CNTRL      (0x54)
-#define GPIO_OUT_BIT_GPIO59              (BIT2)
-#define GPIO_OUT_BIT_GPIO60              (BIT3)
-#define GPIO_OUT_ENABLE_BIT_GPIO59       (BIT6)
-#define GPIO_OUT_ENABLE_BIT_GPIO60       (BIT7)
-
-#define GPIO_OUT_BIT_GPIO60_to_59_MASK \
-	(GPIO_OUT_BIT_GPIO60 | GPIO_OUT_BIT_GPIO59)
-#define GPIO_OUT_ENABLE_BIT_GPIO60_to_59_MASK \
-	(GPIO_OUT_ENABLE_BIT_GPIO60 | GPIO_OUT_ENABLE_BIT_GPIO59)
 
 int do_smbus_read_byte(u32 smbus_io_base, u32 device, u32 address);
 
@@ -74,35 +64,6 @@ static AGESA_STATUS read_spd_buffer(UINT32 unused1, UINTN unused2, AGESA_READ_SP
 	printk(BIOS_INFO, "\n");
 
 	return AGESA_SUCCESS;
-}
-
-static UINT8 select_socket(UINT8 socket_id)
-{
-	pci_devfn_t sm_dev       = PCI_DEV(0, 0x14, 0); //SMBus
-	UINT8    value        = 0;
-	UINT8    gpio60_to_57 = 0;
-
-	/* Configure GPIO60,59 to select the desired socket for SPD reads
-	 * 60 59
-	 *  0  0 -> Disabled
-	 *  0  1 -> SPI Access
-	 *  1  0 -> Socket0
-	 *  1  1 -> Socket1
-	 * See "GPIO_60_to_57_Cntrl" in the SP5100 Register Reference Guide
-	 */
-	gpio60_to_57 = pci_read_config8(sm_dev, PCI_REG_GPIO_60_to_57_CNTRL);
-	value  = gpio60_to_57 & (~GPIO_OUT_BIT_GPIO60_to_59_MASK);
-	value |= ((2|socket_id) << 2) & GPIO_OUT_BIT_GPIO60_to_59_MASK;
-	value &= (~GPIO_OUT_ENABLE_BIT_GPIO60_to_59_MASK); // 0 = Output Enabled, 1 = Tristate
-	pci_write_config8(sm_dev, PCI_REG_GPIO_60_to_57_CNTRL, value);
-
-	return gpio60_to_57;
-}
-
-static void restore_socket(UINT8 original_value)
-{
-	pci_devfn_t sm_dev = PCI_DEV(0, 0x14, 0); //SMBus
-	pci_write_config8(sm_dev, PCI_REG_GPIO_60_to_57_CNTRL, original_value);
 }
 
 /* Voltages are specified using DDR3Voltage values from AGESA */
@@ -179,16 +140,16 @@ static AGESA_STATUS board_ReadSpd (UINT32 Func, UINTN Data, VOID *ConfigPtr)
 {
 	AGESA_STATUS Status;
 #ifdef __PRE_RAM__
-	UINT8 gpio_backup = 0;
 
 	if (ConfigPtr == NULL)
 		return AGESA_ERROR;
 
-	gpio_backup = select_socket(((AGESA_READ_SPD_PARAMS *)ConfigPtr)->SocketId);
+	// Set I2C Mux to Socket 0/1 SPD
+	sb700_gpio_set(SMBUS_GPIO_SPD_MUX_BIT0, ((AGESA_READ_SPD_PARAMS *)ConfigPtr)->SocketId);
+	sb700_gpio_set(SMBUS_GPIO_SPD_MUX_BIT1, 1);
 
 	Status = read_spd_buffer(Func, Data, ConfigPtr);
 
-	restore_socket(gpio_backup);
 #else
 	Status = AGESA_UNSUPPORTED;
 #endif
