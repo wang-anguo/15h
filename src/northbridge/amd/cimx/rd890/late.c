@@ -305,17 +305,15 @@ static void rd890_init(void *chip_info) {
 	// CFG_TEMP_PCIE_MMIO_BASE_ADDRESS
 	pcie_cfg[nb_index].TempMmioBaseAddress = (UINT16)(0xD0000000 >> 20);
 
-	switch(nb_index) {
-		case 0:
-			nb_cfg[nb_index].IoApicBaseAddress = IO_APIC_ADDR;
-			break;
-		case 1:
-			nb_cfg[nb_index].IoApicBaseAddress = 0xFEE00000;
-			break;
-		default:
-			printk(BIOS_ERR, "%s: Unhandled nb_index (%d)\n", __func__, nb_index);
-			break;
+	if(nb_index == 0) {
+		nb_cfg[nb_index].IoApicBaseAddress = IO_APIC_ADDR;
 	}
+
+	#if MAX_NB_COUNT == 2
+	if(nb_index == 1) {
+		nb_cfg[nb_index].IoApicBaseAddress = 0xFEE00000;
+	}
+	#endif
 
 	for (i = 0; i <= MAX_CORE_ID; i++) {
 		pcie_cfg[nb_index].CoreSetting[i].SkipConfiguration = OFF;
