@@ -1,5 +1,0 @@
-config BOARD_SUPERMICRO_H8QGI_PM_F
-	bool "H8QGi+-F"
-
-config BOARD_SUPERMICRO_H8QG6_PM_F
-	bool "H8QG6+-F"
