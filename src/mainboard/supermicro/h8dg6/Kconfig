@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 
-if BOARD_SUPERMICRO_H8DGI || BOARD_SUPERMICRO_H8DG6
+if BOARD_SUPERMICRO_H8DG6
 
 config BOARD_SPECIFIC_OPTIONS
 	def_bool y
@@ -34,21 +34,15 @@ config BOARD_SPECIFIC_OPTIONS
 
 config MAINBOARD_DIR
 	string
-	default supermicro/h8dgi
-
-config VARIANT_DIR
-	string
-	default "h8dgi" if BOARD_SUPERMICRO_H8DGI
-	default "h8dg6" if BOARD_SUPERMICRO_H8DG6
+	default supermicro/h8dg6
 
 config MAINBOARD_PART_NUMBER
 	string
-	default "H8DGi" if BOARD_SUPERMICRO_H8DGI
-	default "H8DG6" if BOARD_SUPERMICRO_H8DG6
+	default "H8DG6"
 
 config DEVICETREE
 	string
-	default "variants/$(CONFIG_VARIANT_DIR)/devicetree.cb"
+	default "devicetree.cb"
 
 config HW_MEM_HOLE_SIZEK
 	hex
@@ -79,4 +73,4 @@ config VGA_BIOS_FILE
 	string
 	default "3rdparty/blobs/mainboard/supermicro/h8qgi/VGABIOS.bin"
 
-endif # BOARD_SUPERMICRO_H8DGI
+endif # BOARD_SUPERMICRO_H8DG6

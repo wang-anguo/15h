@@ -1,6 +1,0 @@
-Board name: H8DGI+-F
-Category: server
-Board URL: https://www.supermicro.com/products/archive/motherboard/h8dgi
-ROM package: SOIC-8
-ROM protocol: SPI
-ROM socketed: n

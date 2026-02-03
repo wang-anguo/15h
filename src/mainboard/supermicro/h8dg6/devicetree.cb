@@ -55,7 +55,7 @@ chip northbridge/amd/agesa/family15/root_complex
 					device pci 13.2 on end # USB2
 					device pci 14.0 on end # SM
 					device pci 14.1 off end # IDE  0x439c
-					device pci 14.2 off end # HDA  0x4383, h8dgi not have codec.
+					device pci 14.2 off end # HDA  0x4383, h8dg6 not have codec.
 					device pci 14.3 on # LPC  0x439d
 						chip superio/winbond/w83627dhg
 							device pnp 2e.0 off #  Floppy

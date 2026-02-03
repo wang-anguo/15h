@@ -1,0 +1,2 @@
+config BOARD_SUPERMICRO_H8DG6
+	bool "H8DG6"
