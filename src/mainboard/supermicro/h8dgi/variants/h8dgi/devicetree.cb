@@ -39,9 +39,10 @@ chip northbridge/amd/agesa/family15/root_complex
 					device pci b.0 on  end # GPP2 Port0, PCIe x8 SLOT3
 					device pci c.0 off end # GPP2 Port1 (Not for sr5650/sr5670)
 					device pci d.0 on  end # GPP3b Port0, Intel 82576
+					register "index" = "0"                # Northbridge Number
 					register "gpp1_configuration" = "0"   # Configuration 16:0 default
 					register "gpp2_configuration" = "1"   # Configuration 8:8
-					register "gpp3a_configuration" = "2"   # 2 Configuration 4:1:1:0:0:0, 11 Configuration 1:1:1:1:1:1
+					register "gpp3a_configuration" = "2"  # 2 Configuration 4:1:1:0:0:0, 11 Configuration 1:1:1:1:1:1
 					register "port_enable" = "0x2814"
 				end #northbridge/amd/cimx/rd890
 				chip southbridge/amd/cimx/sb700 # it is under NB/SB Link, but on the same pci bus

@@ -22,6 +22,7 @@ chip northbridge/amd/agesa/family15/root_complex	# Root complex
 					device pci 9.0 on end			# Bridge (GPP3a Port4), NIC A
 					device pci a.0 on end			# Bridge (GPP3a Port5), NIC b
 					device pci b.0 on end			# Bridge (GPP2 Port0), PCIe4
+					register "index" = "0"                  # Northbridge Number
 					register "gpp1_configuration" = "0"	# Configuration 16:0 default
 					register "gpp2_configuration" = "1"	# Configuration 8:8
 					register "gpp3a_configuration" = "2"	# Configuration 4:1:1:0:0:0
