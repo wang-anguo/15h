@@ -96,9 +96,9 @@ void usbInitAfterPciInit(AMDSBCFG* pConfig){
 		RWPMIO(SB_PMIO_REG65, AccWidthUint8 | S3_SAVE, ~(UINT32)BIT0, 0);
 
 	// Disable the MSI capability of USB host controllers
-	RWPCI((USB1_OHCI0_BUS_DEV_FUN << 16) + SB_OHCI_REG40+1, AccWidthUint8 | S3_SAVE, 0xFF, BIT1+BIT0);
-	RWPCI((USB2_OHCI0_BUS_DEV_FUN << 16) + SB_OHCI_REG40+1, AccWidthUint8 | S3_SAVE, 0xFF, BIT1+BIT0);
-	RWPCI((USB3_OHCI_BUS_DEV_FUN << 16) + SB_OHCI_REG40+1, AccWidthUint8 | S3_SAVE, 0xFF, BIT0);
+	//RWPCI((USB1_OHCI0_BUS_DEV_FUN << 16) + SB_OHCI_REG40+1, AccWidthUint8 | S3_SAVE, 0xFF, BIT1+BIT0);
+	//RWPCI((USB2_OHCI0_BUS_DEV_FUN << 16) + SB_OHCI_REG40+1, AccWidthUint8 | S3_SAVE, 0xFF, BIT1+BIT0);
+	//RWPCI((USB3_OHCI_BUS_DEV_FUN << 16) + SB_OHCI_REG40+1, AccWidthUint8 | S3_SAVE, 0xFF, BIT0);
 
 	//RPR recommended setting "EHCI Advance Asynchronous Enhancement DISABLE"
 	//Set EHCI_pci_configx50[28]='1' to disable the advance async enhancement feature to avoid the bug found in Linux.
